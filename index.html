@@ -1,0 +1,1189 @@
+<title>Русский Тренажёр</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Unbounded:wght@600;800&display=swap">
+<style>
+:root{
+  --paper:#E8E6DF; --panel:#F3F1EC; --raise:#FBFAF7;
+  --ink:#16181D; --ink2:#4A4E57; --ink3:#7C818C;
+  --line:#CFCBC1; --line2:#DEDAD1;
+  --red:#C22A20; --blue:#234E7D; --ochre:#A97518; --green:#2C7A57;
+  --redwash:#F6E3E0; --bluewash:#E0E7F0; --greenwash:#DDEDE4; --ocwash:#F3E9D5;
+  --d-xl:clamp(2rem,5vw,3rem); --d-l:clamp(1.4rem,3vw,1.9rem);
+  --ru-xl:clamp(1.7rem,4.4vw,2.6rem); --ru-l:clamp(1.25rem,2.6vw,1.6rem);
+  --gap:1rem; --rad:3px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#101216; --panel:#191C22; --raise:#20242C;
+    --ink:#E7E5DE; --ink2:#A7ABB4; --ink3:#71767F;
+    --line:#2A2E37; --line2:#232830;
+    --red:#FF6152; --blue:#7FAAE0; --ochre:#D9A63F; --green:#4FC48C;
+    --redwash:#2E1B1A; --bluewash:#17222F; --greenwash:#14261F; --ocwash:#2A2214;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101216; --panel:#191C22; --raise:#20242C;
+  --ink:#E7E5DE; --ink2:#A7ABB4; --ink3:#71767F;
+  --line:#2A2E37; --line2:#232830;
+  --red:#FF6152; --blue:#7FAAE0; --ochre:#D9A63F; --green:#4FC48C;
+  --redwash:#2E1B1A; --bluewash:#17222F; --greenwash:#14261F; --ocwash:#2A2214;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  font-size:15px; line-height:1.55; -webkit-text-size-adjust:100%;
+}
+h1,h2,h3{font-family:"Unbounded","Arial Black",system-ui,sans-serif;font-weight:800;text-wrap:balance;margin:0;letter-spacing:-.01em}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+/* ── shell ────────────────────────────────────────── */
+#shell{display:grid;grid-template-columns:224px minmax(0,1fr);min-height:100vh}
+#rail{border-right:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column}
+#brand{padding:18px 18px 14px;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+#brand::after{content:"";position:absolute;right:-30px;top:-40px;width:90px;height:150px;background:var(--red);transform:rotate(24deg);opacity:.13}
+#brand h1{font-size:1.05rem;line-height:1.15;position:relative}
+#brand .sub{font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-top:6px;position:relative}
+nav{display:flex;flex-direction:column;padding:8px 0;flex:1}
+nav button{
+  display:flex;align-items:baseline;gap:9px;background:none;border:0;border-left:3px solid transparent;
+  padding:8px 16px;text-align:left;cursor:pointer;color:var(--ink2);width:100%;
+}
+nav button .n{font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--ink3);min-width:15px}
+nav button .t{font-weight:500;font-size:.93rem}
+nav button .badge{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:.7rem;background:var(--red);color:#fff;border-radius:9px;padding:0 6px;line-height:16px}
+nav button:hover{color:var(--ink);background:var(--line2)}
+nav button[aria-current="true"]{color:var(--ink);border-left-color:var(--red);background:var(--raise)}
+nav button[aria-current="true"] .t{font-weight:600}
+#railfoot{padding:12px 16px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+main{min-width:0;display:flex;flex-direction:column}
+#topbar{
+  display:flex;gap:22px;align-items:center;padding:11px 26px;border-bottom:1px solid var(--line);
+  background:var(--panel);flex-wrap:wrap;position:sticky;top:0;z-index:5
+}
+.stat{display:flex;flex-direction:column;line-height:1.1}
+.stat .k{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+.stat .v{font-family:"IBM Plex Mono",monospace;font-size:1.05rem;font-weight:500;font-variant-numeric:tabular-nums}
+.stat .v.hot{color:var(--red)}
+#voicewarn{margin-left:auto;font-size:.72rem;color:var(--ochre);max-width:280px}
+#wrap{padding:26px;max-width:900px;width:100%}
+.panel{display:none}
+.panel.on{display:block}
+.eyebrow{font-size:.62rem;letter-spacing:.17em;text-transform:uppercase;color:var(--red);font-weight:600;font-family:"IBM Plex Mono",monospace}
+h2.sect{font-size:var(--d-l);margin:4px 0 4px}
+.lede{color:var(--ink2);max-width:64ch;margin:0 0 20px}
+.rule{height:1px;background:var(--line);border:0;margin:24px 0}
+
+/* ── buttons ──────────────────────────────────────── */
+.btn{background:var(--ink);color:var(--paper);border:1px solid var(--ink);padding:8px 15px;border-radius:var(--rad);cursor:pointer;font-weight:500;font-size:.88rem}
+.btn:hover{opacity:.86}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{background:var(--line2);opacity:1}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+.btn.sm{padding:4px 10px;font-size:.78rem}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+
+/* ── cards / drill stage ──────────────────────────── */
+.stage{
+  background:var(--raise);border:1px solid var(--line);border-radius:var(--rad);
+  padding:26px;display:flex;flex-direction:column;gap:16px;min-height:230px;justify-content:center;text-align:center
+}
+.stage.flash-ok{border-color:var(--green);background:var(--greenwash)}
+.stage.flash-no{border-color:var(--red);background:var(--redwash)}
+.ru{font-size:var(--ru-xl);line-height:1.25;font-weight:500;letter-spacing:-.005em}
+.ru.sm{font-size:var(--ru-l)}
+.en{color:var(--ink2);font-size:1.02rem}
+.tagline{font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);font-family:"IBM Plex Mono",monospace}
+.note{font-size:.85rem;color:var(--ochre);max-width:56ch;margin:0 auto}
+.answerline{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+input[type=text]{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--rad);padding:9px 12px;
+  min-width:min(340px,72vw);font-size:1.05rem
+}
+input[type=text].ru-in{font-size:1.15rem}
+.grades{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px}
+.grades button{padding:9px 4px;border:1px solid var(--line);background:var(--panel);border-radius:var(--rad);cursor:pointer;display:flex;flex-direction:column;gap:2px;align-items:center}
+.grades button:hover{background:var(--line2)}
+.grades .lab{font-weight:600;font-size:.84rem}
+.grades .iv{font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--ink3)}
+.grades button[data-g="0"] .lab{color:var(--red)}
+.grades button[data-g="3"] .lab{color:var(--green)}
+.verdict{font-weight:600}
+.verdict.ok{color:var(--green)} .verdict.no{color:var(--red)} .verdict.near{color:var(--ochre)}
+.progress{height:3px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:14px}
+.progress i{display:block;height:100%;background:var(--red);transition:width .25s}
+
+/* ── choice grid (decoder) ────────────────────────── */
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-width:520px;margin:0 auto;width:100%}
+.choices button{padding:11px;border:1px solid var(--line);background:var(--panel);border-radius:var(--rad);cursor:pointer;font-size:.95rem}
+.choices button:hover{background:var(--line2)}
+.choices button.right{background:var(--greenwash);border-color:var(--green)}
+.choices button.wrong{background:var(--redwash);border-color:var(--red)}
+
+/* ── lists & tables ───────────────────────────────── */
+.plan{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--rad);overflow:hidden;background:var(--raise)}
+.plan .blk{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line2);cursor:pointer}
+.plan .blk:last-child{border-bottom:0}
+.plan .blk:hover{background:var(--panel)}
+.plan .min{font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--red);font-weight:500}
+.plan .what b{display:block;font-weight:600}
+.plan .what span{font-size:.83rem;color:var(--ink2)}
+.plan .tick{width:19px;height:19px;border:1px solid var(--line);border-radius:2px;display:grid;place-items:center;font-size:.8rem;color:transparent;background:var(--panel)}
+.plan .blk.done .tick{background:var(--green);border-color:var(--green);color:#fff}
+.plan .blk.done .what b{text-decoration:line-through;color:var(--ink3)}
+
+table{width:100%;border-collapse:collapse;font-size:.87rem}
+.scroller{overflow-x:auto;border:1px solid var(--line);border-radius:var(--rad);background:var(--raise)}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line2);vertical-align:top}
+th{font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);font-weight:600;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td.lv{font-family:"Unbounded",sans-serif;font-weight:600;color:var(--red);white-space:nowrap}
+
+.dlg{display:flex;flex-direction:column;gap:2px}
+.line{display:grid;grid-template-columns:26px 1fr;gap:10px;padding:9px 12px;border-left:2px solid transparent;border-radius:var(--rad)}
+.line.a{background:var(--bluewash);border-left-color:var(--blue)}
+.line.b{background:var(--panel);border-left-color:var(--line)}
+.line .who{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink3);padding-top:3px}
+.line .ru{font-size:1.05rem;text-align:left;font-weight:500}
+.line .tr{font-size:.85rem;color:var(--ink2)}
+.line .tr.hide{filter:blur(4.5px);cursor:pointer;user-select:none}
+.line .sp{background:none;border:0;cursor:pointer;color:var(--ink3);font-size:.8rem;padding:0}
+.line .sp:hover{color:var(--red)}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:.74rem;padding:3px 9px;border:1px solid var(--line);border-radius:99px;background:var(--panel);cursor:pointer;color:var(--ink2)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.pill{font-size:.66rem;font-family:"IBM Plex Mono",monospace;padding:2px 7px;border-radius:99px;white-space:nowrap}
+.pill.crit{background:var(--redwash);color:var(--red)}
+.pill.warn{background:var(--ocwash);color:var(--ochre)}
+.pill.good{background:var(--greenwash);color:var(--green)}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.box{border:1px solid var(--line);border-radius:var(--rad);padding:14px 16px;background:var(--raise)}
+.box h3{font-size:.95rem;margin-bottom:6px}
+.box p{margin:0;color:var(--ink2);font-size:.88rem}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid var(--line2);font-size:.88rem}
+.kv:last-child{border-bottom:0}
+.pat{border-left:2px solid var(--red);padding:2px 0 2px 12px;margin:12px 0}
+.pat .p{font-size:1.15rem;font-weight:500}
+.pat .g{font-size:.83rem;color:var(--ink2)}
+.empty{color:var(--ink3);font-style:italic;padding:18px 0}
+.sw{background:none;border:0;cursor:pointer;color:var(--ink3);font-size:1rem;padding:2px 5px;border-radius:var(--rad)}
+.sw:hover{color:var(--red);background:var(--line2)}
+select{background:var(--panel);border:1px solid var(--line);border-radius:var(--rad);padding:4px 7px;font-size:.8rem}
+
+@media (max-width:820px){
+  #shell{grid-template-columns:1fr}
+  #rail{border-right:0;border-bottom:1px solid var(--line)}
+  #brand::after{display:none}
+  nav{flex-direction:row;overflow-x:auto;padding:0}
+  nav button{border-left:0;border-bottom:3px solid transparent;white-space:nowrap;width:auto;padding:9px 13px}
+  nav button[aria-current="true"]{border-left-color:transparent;border-bottom-color:var(--red)}
+  nav button .n{display:none}
+  #railfoot{border-top:1px solid var(--line)}
+  #wrap{padding:18px 16px}
+  .stage{padding:20px 16px}
+  .grades{grid-template-columns:repeat(2,1fr)}
+  .choices{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div id="shell">
+  <aside id="rail">
+    <div id="brand">
+      <h1>Русский<br>Тренажёр</h1>
+      <div class="sub">A1 · speaking track</div>
+    </div>
+    <nav id="nav"></nav>
+    <div id="railfoot">
+      <button class="sw" id="themebtn" title="Toggle theme">◐</button>
+      <select id="rate" title="Speech speed">
+        <option value="0.7">0.7×</option><option value="0.85" selected>0.85×</option>
+        <option value="1">1.0×</option><option value="1.15">1.15×</option>
+      </select>
+      <button class="btn ghost sm" id="resetbtn">Reset</button>
+    </div>
+  </aside>
+
+  <main>
+    <div id="topbar">
+      <div class="stat"><span class="k">Due now</span><span class="v hot" id="s-due">0</span></div>
+      <div class="stat"><span class="k">Known</span><span class="v" id="s-known">0</span></div>
+      <div class="stat"><span class="k">Streak</span><span class="v" id="s-streak">0</span></div>
+      <div class="stat"><span class="k">Accuracy</span><span class="v" id="s-acc">—</span></div>
+      <div class="stat"><span class="k">Decode</span><span class="v" id="s-dec">—</span></div>
+      <div id="voicewarn"></div>
+    </div>
+    <div id="wrap">
+      <section class="panel" id="p-today"></section>
+      <section class="panel" id="p-decode"></section>
+      <section class="panel" id="p-cards"></section>
+      <section class="panel" id="p-patterns"></section>
+      <section class="panel" id="p-verbs"></section>
+      <section class="panel" id="p-cases"></section>
+      <section class="panel" id="p-dialog"></section>
+      <section class="panel" id="p-sprint"></section>
+      <section class="panel" id="p-errors"></section>
+      <section class="panel" id="p-course"></section>
+    </div>
+  </main>
+</div>
+
+<script>
+"use strict";
+/* ══════════════════ DATA ══════════════════ */
+
+/* Sentence deck. t = topic tag, tier 1 = survival core, 2 = conversation, 3 = personal interest */
+const DECK = [
+/* survival */
+{id:1,ru:"Приве́т",en:"Hi (informal)",t:"greet",tier:1},
+{id:2,ru:"Здра́вствуйте",en:"Hello (formal, to anyone you'd call Вы)",t:"greet",tier:1,note:"The first в is silent: ZDRAST-vuy-tye."},
+{id:3,ru:"Как дела́?",en:"How are you?",t:"greet",tier:1},
+{id:4,ru:"Всё хорошо́, спаси́бо",en:"Everything's good, thanks",t:"greet",tier:1},
+{id:5,ru:"Норма́льно",en:"Fine / OK (the default honest answer)",t:"greet",tier:1},
+{id:6,ru:"Как тебя́ зову́т?",en:"What's your name? (informal)",t:"greet",tier:1,note:"Literally: how do they call you."},
+{id:7,ru:"Меня́ зову́т…",en:"My name is…",t:"greet",tier:1},
+{id:8,ru:"О́чень прия́тно",en:"Nice to meet you",t:"greet",tier:1},
+{id:9,ru:"Отку́да ты?",en:"Where are you from?",t:"greet",tier:1},
+{id:10,ru:"Я из Гре́ции",en:"I'm from Greece",t:"greet",tier:1,note:"из + genitive. Гре́ция → Гре́ции."},
+{id:11,ru:"Я живу́ в Афи́нах",en:"I live in Athens",t:"greet",tier:1},
+{id:12,ru:"Я не понима́ю",en:"I don't understand",t:"survive",tier:1},
+{id:13,ru:"Повтори́те, пожа́луйста",en:"Please repeat (formal)",t:"survive",tier:1},
+{id:14,ru:"Говори́ ме́дленнее",en:"Speak slower (informal)",t:"survive",tier:1},
+{id:15,ru:"Что э́то зна́чит?",en:"What does this mean?",t:"survive",tier:1},
+{id:16,ru:"Как по-ру́сски «coffee»?",en:"How do you say “coffee” in Russian?",t:"survive",tier:1},
+{id:17,ru:"Извини́те, пожа́луйста",en:"Excuse me, please",t:"survive",tier:1},
+{id:18,ru:"Ско́лько э́то сто́ит?",en:"How much does this cost?",t:"survive",tier:1},
+{id:19,ru:"Где здесь метро́?",en:"Where's the metro around here?",t:"survive",tier:1},
+{id:20,ru:"Мо́жешь помо́чь?",en:"Can you help? (informal)",t:"survive",tier:1},
+{id:21,ru:"До свида́ния",en:"Goodbye (neutral/formal)",t:"greet",tier:1},
+{id:22,ru:"Пока́!",en:"Bye! (informal)",t:"greet",tier:1},
+{id:23,ru:"Споко́йной но́чи",en:"Good night",t:"greet",tier:1},
+{id:24,ru:"Ничего́ стра́шного",en:"No problem / it's nothing",t:"survive",tier:1,note:"ничего́ is pronounced nee-chee-VO — г sounds like в here."},
+/* быть & basic sentences */
+{id:25,ru:"Э́то мой друг",en:"This is my friend (male)",t:"core",tier:1},
+{id:26,ru:"Э́то моя́ подру́га",en:"This is my friend (female)",t:"core",tier:1},
+{id:27,ru:"Он до́ктор",en:"He is a doctor",t:"core",tier:1,note:"No word for “is” in the present. Он [—] до́ктор."},
+{id:28,ru:"Она́ о́чень у́мная",en:"She's very smart",t:"core",tier:2},
+{id:29,ru:"Они́ до́ма",en:"They're at home",t:"core",tier:1},
+{id:30,ru:"Я был в Москве́",en:"I was in Moscow (male speaker)",t:"core",tier:2,note:"Past tense agrees with gender: был / была́ / бы́ло / бы́ли."},
+{id:31,ru:"Она́ была́ на рабо́те",en:"She was at work",t:"core",tier:2},
+{id:32,ru:"Э́то бы́ло интере́сно",en:"That was interesting",t:"core",tier:2},
+{id:33,ru:"За́втра я бу́ду до́ма",en:"Tomorrow I'll be home",t:"core",tier:2},
+{id:34,ru:"Кто э́то?",en:"Who is that?",t:"core",tier:1},
+/* power patterns */
+{id:35,ru:"Я хочу́ есть",en:"I'm hungry (lit. I want to eat)",t:"pattern",tier:1},
+{id:36,ru:"Я хочу́ ко́фе",en:"I want coffee",t:"pattern",tier:1,note:"ко́фе never changes its ending."},
+{id:37,ru:"Что ты хо́чешь?",en:"What do you want?",t:"pattern",tier:1},
+{id:38,ru:"Мне ну́жно рабо́тать",en:"I need to work",t:"pattern",tier:1,note:"Мне (dative) + ну́жно + infinitive. No “I” in the nominative here."},
+{id:39,ru:"Мне на́до идти́",en:"I have to go",t:"pattern",tier:1},
+{id:40,ru:"Мне нра́вится э́та пе́сня",en:"I like this song",t:"pattern",tier:1,note:"Literally: this song is pleasing to me. The song is the subject."},
+{id:41,ru:"Мне нра́вится игра́ть в футбо́л",en:"I like playing football",t:"pattern",tier:2},
+{id:42,ru:"Мне нра́вятся ру́сские фи́льмы",en:"I like Russian films",t:"pattern",tier:2,note:"Plural subject → нра́вятся."},
+{id:43,ru:"Тебе́ нра́вится Москва́?",en:"Do you like Moscow?",t:"pattern",tier:2},
+{id:44,ru:"У меня́ есть вопро́с",en:"I have a question",t:"pattern",tier:1,note:"Russian has no “to have”: at me there is a question."},
+{id:45,ru:"У меня́ нет вре́мени",en:"I don't have time",t:"pattern",tier:1,note:"нет + genitive. вре́мя → вре́мени."},
+{id:46,ru:"У тебя́ есть пла́ны на ве́чер?",en:"Do you have plans tonight?",t:"pattern",tier:2},
+{id:47,ru:"Я могу́ помо́чь",en:"I can help",t:"pattern",tier:1},
+{id:48,ru:"Я не могу́ сейча́с",en:"I can't right now",t:"pattern",tier:1},
+{id:49,ru:"Я ду́маю, что э́то пра́вда",en:"I think that's true",t:"pattern",tier:2,note:"Russian keeps the comma before что — always."},
+{id:50,ru:"Я не зна́ю, где он",en:"I don't know where he is",t:"pattern",tier:2},
+{id:51,ru:"Я собира́юсь в спортза́л",en:"I'm heading to the gym",t:"pattern",tier:2},
+{id:52,ru:"Я уже́ поза́втракал",en:"I already had breakfast",t:"pattern",tier:2},
+{id:53,ru:"Я ещё не гото́в",en:"I'm not ready yet",t:"pattern",tier:2},
+{id:54,ru:"Дава́й встре́тимся в шесть",en:"Let's meet at six",t:"pattern",tier:2},
+{id:55,ru:"Мо́жно посмотре́ть?",en:"May I take a look?",t:"pattern",tier:2},
+/* verbs in context */
+{id:56,ru:"Я рабо́таю удалённо",en:"I work remotely",t:"work",tier:2},
+{id:57,ru:"Где ты рабо́таешь?",en:"Where do you work?",t:"work",tier:1},
+{id:58,ru:"Что ты де́лаешь?",en:"What are you doing?",t:"core",tier:1},
+{id:59,ru:"Я чита́ю но́вости",en:"I'm reading the news",t:"core",tier:2},
+{id:60,ru:"Он говори́т по-ру́сски",en:"He speaks Russian",t:"core",tier:1},
+{id:61,ru:"Ты говори́шь по-англи́йски?",en:"Do you speak English?",t:"core",tier:1},
+{id:62,ru:"Я слу́шаю му́зыку",en:"I'm listening to music",t:"music",tier:1},
+{id:63,ru:"Мы смо́трим фильм",en:"We're watching a film",t:"music",tier:2},
+{id:64,ru:"Я иду́ домо́й",en:"I'm walking home",t:"core",tier:1,note:"идти́ = going on foot, right now, one direction."},
+{id:65,ru:"Я е́ду в Москву́",en:"I'm going to Moscow (by transport)",t:"travel",tier:1,note:"е́хать, not идти́ — anything with wheels or wings."},
+{id:66,ru:"Она́ живёт в Петербу́рге",en:"She lives in Petersburg",t:"core",tier:2},
+{id:67,ru:"Я люблю́ тебя́",en:"I love you",t:"social",tier:1},
+{id:68,ru:"Он лю́бит футбо́л",en:"He loves football",t:"sport",tier:1},
+{id:69,ru:"Я ви́жу пробле́му",en:"I see a problem",t:"work",tier:2},
+{id:70,ru:"Подожди́ мину́ту",en:"Wait a minute",t:"survive",tier:1},
+{id:71,ru:"Я купи́л биле́т",en:"I bought a ticket",t:"travel",tier:2},
+/* food & travel */
+{id:72,ru:"Оди́н ко́фе, пожа́луйста",en:"One coffee, please",t:"food",tier:1},
+{id:73,ru:"Счёт, пожа́луйста",en:"The bill, please",t:"food",tier:1},
+{id:74,ru:"Мо́жно меню́?",en:"Can I get the menu?",t:"food",tier:1},
+{id:75,ru:"О́чень вку́сно",en:"Very tasty",t:"food",tier:1},
+{id:76,ru:"Я не ем мя́со",en:"I don't eat meat",t:"food",tier:2},
+{id:77,ru:"Ещё оди́н, пожа́луйста",en:"One more, please",t:"food",tier:1},
+{id:78,ru:"Без са́хара",en:"Without sugar",t:"food",tier:2},
+{id:79,ru:"Где ближа́йшая апте́ка?",en:"Where's the nearest pharmacy?",t:"travel",tier:2},
+{id:80,ru:"Мне ну́жен биле́т до Москвы́",en:"I need a ticket to Moscow",t:"travel",tier:2,note:"ну́жен agrees with биле́т (masc). Feminine: нужна́, plural: нужны́."},
+{id:81,ru:"Во ско́лько по́езд?",en:"What time is the train?",t:"travel",tier:2},
+{id:82,ru:"Э́то далеко́?",en:"Is it far?",t:"travel",tier:1},
+{id:83,ru:"Поверни́те напра́во",en:"Turn right (formal)",t:"travel",tier:2},
+/* work / tech / markets */
+{id:84,ru:"Я рабо́таю с да́нными",en:"I work with data",t:"work",tier:3,note:"с + instrumental. да́нные → да́нными."},
+{id:85,ru:"Ры́нок сего́дня па́дает",en:"The market is falling today",t:"work",tier:3},
+{id:86,ru:"Цена́ вы́росла на два проце́нта",en:"The price rose two percent",t:"work",tier:3},
+{id:87,ru:"Э́то сли́шком риско́ванно",en:"That's too risky",t:"work",tier:3},
+{id:88,ru:"У меня́ встре́ча в три",en:"I have a meeting at three",t:"work",tier:2},
+{id:89,ru:"Я отпра́влю файл ве́чером",en:"I'll send the file this evening",t:"work",tier:3},
+{id:90,ru:"Не рабо́тает",en:"It's not working / it's broken",t:"work",tier:1},
+{id:91,ru:"Ско́лько э́то займёт вре́мени?",en:"How long will that take?",t:"work",tier:2},
+{id:92,ru:"Дава́й обсу́дим за́втра",en:"Let's discuss it tomorrow",t:"work",tier:2},
+{id:93,ru:"Я согла́сен",en:"I agree (male speaker)",t:"work",tier:2,note:"Female speaker: Я согла́сна."},
+/* sport, music, social */
+{id:94,ru:"Я хожу́ в спортза́л три ра́за в неде́лю",en:"I go to the gym three times a week",t:"sport",tier:3,note:"ходи́ть = repeated trips. Not иду́."},
+{id:95,ru:"Сего́дня я трениру́юсь",en:"Today I'm training",t:"sport",tier:3},
+{id:96,ru:"Кто вы́играл?",en:"Who won?",t:"sport",tier:3},
+{id:97,ru:"Он заби́л гол",en:"He scored a goal",t:"sport",tier:3},
+{id:98,ru:"Я уста́л",en:"I'm tired (male speaker)",t:"social",tier:1},
+{id:99,ru:"Кака́я твоя́ люби́мая гру́ппа?",en:"What's your favourite band?",t:"music",tier:3},
+{id:100,ru:"Э́та пе́сня мне о́чень нра́вится",en:"I really like this song",t:"music",tier:2},
+{id:101,ru:"Пойдём в кино́?",en:"Shall we go to the cinema?",t:"social",tier:2},
+{id:102,ru:"Я смотре́л э́тот фильм",en:"I've seen this film",t:"music",tier:2},
+{id:103,ru:"Что но́вого?",en:"What's new?",t:"social",tier:1},
+{id:104,ru:"Дава́й созво́нимся",en:"Let's talk on the phone",t:"social",tier:2},
+{id:105,ru:"Я скуча́ю по тебе́",en:"I miss you",t:"social",tier:2},
+{id:106,ru:"Ты свобо́ден в суббо́ту?",en:"Are you free on Saturday? (to a man)",t:"social",tier:2},
+{id:107,ru:"Я не уве́рен",en:"I'm not sure (male speaker)",t:"social",tier:2},
+{id:108,ru:"Мне всё равно́",en:"I don't mind / it's all the same to me",t:"social",tier:2},
+{id:109,ru:"Коне́чно!",en:"Of course!",t:"social",tier:1,note:"Pronounced ka-NYESH-na — чн sounds like шн here."},
+{id:110,ru:"Договори́лись",en:"Deal / agreed",t:"social",tier:2},
+{id:111,ru:"Мо́жет быть",en:"Maybe",t:"social",tier:1},
+{id:112,ru:"Я то́лько начина́ю учи́ть ру́сский",en:"I'm just starting to learn Russian",t:"survive",tier:1}
+];
+
+/* Decoder: transparent international words — meaning is obvious IF you decode correctly */
+const DECODE = [
+["такси́","taxi"],["ко́фе","coffee"],["рестора́н","restaurant"],["аэропо́рт","airport"],["банк","bank"],
+["метро́","metro"],["музе́й","museum"],["парк","park"],["футбо́л","football"],["компью́тер","computer"],
+["интерне́т","internet"],["телефо́н","telephone"],["докуме́нт","document"],["университе́т","university"],
+["студе́нт","student"],["до́ктор","doctor"],["тури́ст","tourist"],["ба́нкомат","cash machine"],
+["суперма́ркет","supermarket"],["спорт","sport"],["матч","match"],["теа́тр","theatre"],["конце́рт","concert"],
+["па́спорт","passport"],["ви́за","visa"],["оте́ль","hotel"],["бар","bar"],["клуб","club"],["пи́цца","pizza"],
+["сала́т","salad"],["суп","soup"],["лимо́н","lemon"],["шокола́д","chocolate"],["вино́","wine"],
+["проце́нт","percent"],["ба́ланс","balance"],["кри́зис","crisis"],["а́кция","share / stock"],["капита́л","capital"],
+["ме́неджер","manager"],["о́фис","office"],["проце́сс","process"],["систе́ма","system"],["програ́мма","programme"],
+["алгори́тм","algorithm"],["се́рвер","server"],["файл","file"],["ко́д","code"],["ли́мит","limit"],
+["му́зыка","music"],["гита́ра","guitar"],["рок","rock"],["альбо́м","album"],["ви́део","video"],["ка́мера","camera"],
+["экра́н","screen"],["трамва́й","tram"],["авто́бус","bus"],["ста́нция","station"],["платфо́рма","platform"],
+["киломе́тр","kilometre"],["мину́та","minute"],["секу́нда","second"],["температу́ра","temperature"],
+["витами́н","vitamin"],["профе́ссор","professor"],["журна́л","magazine"],["текст","text"],["план","plan"],
+["ана́лиз","analysis"],["результа́т","result"],["ко́нтракт","contract"],["инвести́ция","investment"]
+];
+
+/* Verb conjugation tables (present tense unless marked pf = perfective future) */
+const VERBS = [
+{inf:"рабо́тать",en:"to work",cls:"–ешь (type 1)",f:["рабо́таю","рабо́таешь","рабо́тает","рабо́таем","рабо́таете","рабо́тают"]},
+{inf:"де́лать",en:"to do / make",cls:"–ешь (type 1)",f:["де́лаю","де́лаешь","де́лает","де́лаем","де́лаете","де́лают"]},
+{inf:"ду́мать",en:"to think",cls:"–ешь (type 1)",f:["ду́маю","ду́маешь","ду́мает","ду́маем","ду́маете","ду́мают"]},
+{inf:"знать",en:"to know",cls:"–ешь (type 1)",f:["зна́ю","зна́ешь","зна́ет","зна́ем","зна́ете","зна́ют"]},
+{inf:"чита́ть",en:"to read",cls:"–ешь (type 1)",f:["чита́ю","чита́ешь","чита́ет","чита́ем","чита́ете","чита́ют"]},
+{inf:"слу́шать",en:"to listen",cls:"–ешь (type 1)",f:["слу́шаю","слу́шаешь","слу́шает","слу́шаем","слу́шаете","слу́шают"]},
+{inf:"понима́ть",en:"to understand",cls:"–ешь (type 1)",f:["понима́ю","понима́ешь","понима́ет","понима́ем","понима́ете","понима́ют"]},
+{inf:"игра́ть",en:"to play",cls:"–ешь (type 1)",f:["игра́ю","игра́ешь","игра́ет","игра́ем","игра́ете","игра́ют"]},
+{inf:"жить",en:"to live",cls:"stem change: жив–",f:["живу́","живёшь","живёт","живём","живёте","живу́т"]},
+{inf:"идти́",en:"to go (on foot, now)",cls:"stem change: ид–",f:["иду́","идёшь","идёт","идём","идёте","иду́т"]},
+{inf:"е́хать",en:"to go (by transport, now)",cls:"stem change: ед–",f:["е́ду","е́дешь","е́дет","е́дем","е́дете","е́дут"]},
+{inf:"писа́ть",en:"to write",cls:"с→ш mutation",f:["пишу́","пи́шешь","пи́шет","пи́шем","пи́шете","пи́шут"]},
+{inf:"говори́ть",en:"to speak",cls:"–ишь (type 2)",f:["говорю́","говори́шь","говори́т","говори́м","говори́те","говоря́т"]},
+{inf:"люби́ть",en:"to love",cls:"–ишь, л inserted in я-form",f:["люблю́","лю́бишь","лю́бит","лю́бим","лю́бите","лю́бят"]},
+{inf:"ви́деть",en:"to see",cls:"–ишь, д→ж in я-form",f:["ви́жу","ви́дишь","ви́дит","ви́дим","ви́дите","ви́дят"]},
+{inf:"смотре́ть",en:"to watch",cls:"–ишь (type 2)",f:["смотрю́","смо́тришь","смо́трит","смо́трим","смо́трите","смо́трят"]},
+{inf:"хоте́ть",en:"to want",cls:"irregular — mixed endings",f:["хочу́","хо́чешь","хо́чет","хоти́м","хоти́те","хотя́т"]},
+{inf:"мочь",en:"to be able",cls:"irregular — г/ж alternation",f:["могу́","мо́жешь","мо́жет","мо́жем","мо́жете","мо́гут"]},
+{inf:"есть",en:"to eat",cls:"irregular",f:["ем","ешь","ест","еди́м","еди́те","едя́т"]},
+{inf:"пить",en:"to drink",cls:"stem change: пь–",f:["пью","пьёшь","пьёт","пьём","пьёте","пьют"]},
+{inf:"ждать",en:"to wait",cls:"stem change: жд–",f:["жду","ждёшь","ждёт","ждём","ждёте","ждут"]},
+{inf:"купи́ть",en:"to buy (perfective → future)",cls:"–ишь, л inserted",f:["куплю́","ку́пишь","ку́пит","ку́пим","ку́пите","ку́пят"]}
+];
+const PERSONS=["я","ты","он / она́","мы","вы","они́"];
+
+/* Case drill */
+const CASES=[
+{s:"Я живу́ в ___",base:"Москва́",a:"Москве́",c:"prepositional",why:"в + prepositional = location. Feminine –а → –е."},
+{s:"Я е́ду в ___",base:"Москва́",a:"Москву́",c:"accusative",why:"в + accusative = direction. Same preposition, different case, different meaning."},
+{s:"У меня́ нет ___",base:"вре́мя",a:"вре́мени",c:"genitive",why:"нет always takes genitive. вре́мя is irregular: вре́мени."},
+{s:"Я люблю́ ___",base:"му́зыка",a:"му́зыку",c:"accusative",why:"Direct object of люби́ть. Feminine –а → –у."},
+{s:"Он рабо́тает в ___",base:"о́фис",a:"о́фисе",c:"prepositional",why:"Masculine hard nouns add –е in the prepositional."},
+{s:"Мы говори́м о ___",base:"рабо́та",a:"рабо́те",c:"prepositional",why:"о (about) + prepositional."},
+{s:"Я иду́ на ___",base:"рабо́та",a:"рабо́ту",c:"accusative",why:"на + accusative = motion towards. Work is a на-word, not a в-word."},
+{s:"Э́то пода́рок для ___",base:"брат",a:"бра́та",c:"genitive",why:"для (for) + genitive."},
+{s:"Я ви́жу ___",base:"брат",a:"бра́та",c:"accusative",why:"Animate masculine accusative copies the genitive form."},
+{s:"Я ви́жу ___",base:"дом",a:"дом",c:"accusative",why:"Inanimate masculine accusative looks identical to the nominative. Nothing changes."},
+{s:"Она́ рабо́тает ___",base:"до́ктор",a:"до́ктором",c:"instrumental",why:"Working AS something = instrumental."},
+{s:"Я иду́ с ___",base:"друг",a:"дру́гом",c:"instrumental",why:"с (with) + instrumental."},
+{s:"Мне ну́жно два ___",base:"биле́т",a:"биле́та",c:"genitive sg",why:"2, 3, 4 take the genitive singular. From 5 up: genitive plural."},
+{s:"У него́ нет ___",base:"де́ньги",a:"де́нег",c:"genitive pl",why:"де́ньги is plural-only; its genitive is де́нег."},
+{s:"Я был в ___",base:"Росси́я",a:"Росси́и",c:"prepositional",why:"Nouns ending –ия take –ии, not –ие."},
+{s:"Дай э́то ___",base:"Ива́н",a:"Ива́ну",c:"dative",why:"The recipient goes in the dative. Masculine adds –у."},
+{s:"Я звоню́ ___",base:"ма́ма",a:"ма́ме",c:"dative",why:"звони́ть governs the dative — you call TO someone in Russian."},
+{s:"Кни́га лежи́т на ___",base:"стол",a:"столе́",c:"prepositional",why:"на + prepositional = location on. Stress shifts to the ending: столе́."},
+{s:"Э́то ко́мната ___",base:"сестра́",a:"сестры́",c:"genitive",why:"Possession: the room OF the sister."},
+{s:"Он идёт в ___",base:"шко́ла",a:"шко́лу",c:"accusative",why:"Motion into → accusative."}
+];
+
+/* Sentence patterns — the generators */
+const PATTERNS=[
+{p:"Я хочу́ + infinitive / accusative",g:"I want to…",ex:["Я хочу́ есть.","Я хочу́ спать.","Я хочу́ ко́фе.","Я хочу́ поговори́ть."]},
+{p:"Мне ну́жно / на́до + infinitive",g:"I need to…",ex:["Мне ну́жно рабо́тать.","Мне на́до идти́.","Мне ну́жно отдохну́ть."]},
+{p:"Мне нра́вится + nominative / infinitive",g:"I like…",ex:["Мне нра́вится Москва́.","Мне нра́вится гуля́ть.","Мне нра́вятся э́ти пе́сни."]},
+{p:"У меня́ есть + nominative",g:"I have…",ex:["У меня́ есть вопро́с.","У меня́ есть вре́мя.","У меня́ есть иде́я."]},
+{p:"У меня́ нет + genitive",g:"I don't have…",ex:["У меня́ нет вре́мени.","У меня́ нет де́нег.","У меня́ нет маши́ны."]},
+{p:"Я могу́ / не могу́ + infinitive",g:"I can / can't…",ex:["Я могу́ помо́чь.","Я не могу́ сейча́с.","Я могу́ прийти́ в семь."]},
+{p:"Я ду́маю, что …",g:"I think that…",ex:["Я ду́маю, что э́то пра́вда.","Я ду́маю, что он прав.","Я не ду́маю, что э́то ва́жно."]},
+{p:"Я собира́юсь + infinitive / в + acc",g:"I'm going to…",ex:["Я собира́юсь рабо́тать.","Я собира́юсь в спортза́л.","Я собира́юсь купи́ть биле́т."]},
+{p:"Я уже́ … / Я ещё не …",g:"I already… / I haven't yet…",ex:["Я уже́ поза́втракал.","Я ещё не гото́в.","Я ещё не ви́дел э́тот фильм."]},
+{p:"Дава́й + мы-form (perfective)",g:"Let's…",ex:["Дава́й пойдём.","Дава́й встре́тимся в шесть.","Дава́й обсу́дим за́втра."]},
+{p:"Мо́жно + infinitive?",g:"May I / can one…?",ex:["Мо́жно посмотре́ть?","Мо́жно вопро́с?","Мо́жно ещё оди́н?"]},
+{p:"Ско́лько + genitive?",g:"How much / how many…?",ex:["Ско́лько э́то сто́ит?","Ско́лько вре́мени?","Ско́лько лет?"]}
+];
+
+/* Dialogues */
+const DIALOGS=[
+{title:"Знако́мство",en:"Meeting someone",lines:[
+["A","Приве́т! Меня́ зову́т А́нна.","Hi! My name is Anna."],
+["B","Приве́т, А́нна. Я Ни́кос. О́чень прия́тно.","Hi Anna. I'm Nikos. Nice to meet you."],
+["A","Отку́да ты?","Where are you from?"],
+["B","Я из Гре́ции, но сейча́с живу́ здесь.","I'm from Greece, but I live here now."],
+["A","Кла́ссно! А чем ты занима́ешься?","Cool! And what do you do?"],
+["B","Я рабо́таю с да́нными. А ты?","I work with data. And you?"],
+["A","Я преподаю́ англи́йский.","I teach English."],
+["B","Интере́сно. Дава́й ко́фе как-нибу́дь?","Interesting. Coffee sometime?"],
+["A","Дава́й!","Let's!"]]},
+{title:"В кафе́",en:"In the café",lines:[
+["A","Здра́вствуйте! Что бу́дете?","Hello! What will you have?"],
+["B","Оди́н ко́фе, пожа́луйста. Без са́хара.","One coffee, please. No sugar."],
+["A","Что-нибу́дь ещё?","Anything else?"],
+["B","Да, ещё во́ду.","Yes, water too."],
+["A","Хорошо́. Э́то всё?","OK. Is that everything?"],
+["B","Да, всё. Ско́лько с меня́?","Yes, that's all. How much do I owe?"],
+["A","Три́ста пятьдеся́т рубле́й.","Three hundred fifty roubles."],
+["B","Вот, пожа́луйста. Спаси́бо!","Here you go. Thanks!"]]},
+{title:"Такси́",en:"In a taxi",lines:[
+["A","Куда́ вам?","Where to?"],
+["B","На вокза́л, пожа́луйста.","To the station, please."],
+["A","Хорошо́, сади́тесь.","OK, get in."],
+["B","Ско́лько э́то займёт?","How long will it take?"],
+["A","Мину́т два́дцать, е́сли без про́бок.","About twenty minutes, if there's no traffic."],
+["B","Отли́чно. Мо́жно поти́ше му́зыку?","Great. Could you turn the music down?"],
+["A","Коне́чно.","Of course."]]},
+{title:"О рабо́те",en:"About work",lines:[
+["A","Как рабо́та?","How's work?"],
+["B","Мно́го дел, но всё норма́льно.","Lots to do, but it's all fine."],
+["A","Ты всё ещё рабо́таешь удалённо?","Are you still working remotely?"],
+["B","Да, почти́ ка́ждый день. Иногда́ е́зжу в о́фис.","Yes, almost every day. Sometimes I go into the office."],
+["A","Тебе́ нра́вится?","Do you like it?"],
+["B","Нра́вится, но иногда́ ску́чно одному́ до́ма.","I like it, but sometimes it's boring alone at home."]]},
+{title:"Пла́ны на ве́чер",en:"Plans for tonight",lines:[
+["A","Что де́лаешь ве́чером?","What are you doing tonight?"],
+["B","Ещё не зна́ю. А что?","Don't know yet. Why?"],
+["A","Пойдём в кино́?","Shall we go to the cinema?"],
+["B","Дава́й. Во ско́лько?","Let's. What time?"],
+["A","Дава́й в во́семь у метро́.","Let's say eight, by the metro."],
+["B","Хорошо́, договори́лись.","OK, deal."]]}
+];
+
+/* Rapid response prompts — answer OUT LOUD, then self-grade */
+const RAPID=[
+["Как тебя́ зову́т?","What's your name?"],
+["Отку́да ты?","Where are you from?"],
+["Где ты живёшь?","Where do you live?"],
+["Что ты де́лаешь сейча́с?","What are you doing right now?"],
+["Ты рабо́таешь и́ли у́чишься?","Do you work or study?"],
+["Тебе́ нра́вится ру́сский язы́к?","Do you like Russian?"],
+["Что ты де́лал вчера́?","What did you do yesterday?"],
+["Каки́е у тебя́ пла́ны на за́втра?","What are your plans for tomorrow?"],
+["Ты лю́бишь футбо́л?","Do you like football?"],
+["Что ты обы́чно ешь на за́втрак?","What do you usually eat for breakfast?"],
+["Кака́я твоя́ люби́мая му́зыка?","What's your favourite music?"],
+["Ско́лько сейча́с вре́мени?","What time is it?"],
+["Ты хо́чешь ко́фе и́ли чай?","Do you want coffee or tea?"],
+["Почему́ ты у́чишь ру́сский?","Why are you learning Russian?"],
+["Что ты де́лаешь в выходны́е?","What do you do at the weekend?"]
+];
+
+/* Curriculum */
+const COURSE=[
+{lv:"A0",wk:"—",core:"Cyrillic decoding to reflex speed. Stress and vowel reduction (о→а). Hard vs soft consonants by ear.",can:"Read any Russian word aloud without translating it letter by letter.",test:"Decode 30 cognates under 1.5s each."},
+{lv:"A1",wk:"Weeks 1–10",core:"Present tense, both conjugation types. Gender. Accusative + prepositional. Мне нра́вится / У меня́ есть. Past tense. Numbers 1–100.",can:"Introduce yourself, order, ask directions and prices, describe your day, hold a 3-minute conversation about work and free time.",test:"5-minute unscripted conversation on a familiar topic, ≤2 meaning-breaking errors."},
+{lv:"A2",wk:"Weeks 11–26",core:"All six cases. Verb aspect (imperfective/perfective) as a working habit. Verbs of motion with prefixes. Comparatives. Future tense both aspects.",can:"Handle any transaction, tell a story in the past, make plans, explain a problem, disagree politely.",test:"Narrate a 2-minute story in the past with correct aspect choice."},
+{lv:"B1",wk:"Months 7–14",core:"Conditional (бы). Participles passively. Reported speech. Verb government tables. Word-formation: prefixes and suffixes as a system.",can:"Discuss opinions, follow native conversation between two people, watch films with Russian subtitles, work in Russian at a basic level.",test:"Defend an opinion for 5 minutes against pushback."},
+{lv:"B2",wk:"Months 15–28",core:"Full participle and gerund production. Aspect in nuance (negation, repetition, attempts). Register control: formal, neutral, colloquial. Idioms.",can:"Talk about abstract topics, understand podcasts and news at speed, read novels with a dictionary, sound like yourself in Russian.",test:"90 minutes of native-speed conversation without switching to English."},
+{lv:"C1",wk:"Year 3+",core:"Stylistics, low-frequency vocabulary, cultural literacy, humour, wordplay, literary and bureaucratic registers.",can:"Operate professionally and socially in Russian without accommodation from native speakers.",test:"Native listeners stop simplifying for you."}
+];
+
+const TOPICS=[["greet","Greetings"],["survive","Survival"],["core","Core sentences"],["pattern","Patterns"],["work","Work / markets"],["food","Food"],["travel","Travel"],["sport","Sport"],["music","Music / film"],["social","Social"]];
+
+/* ══════════════════ STATE ══════════════════ */
+const KEY="ru-trainer-v1";
+const DAY=864e5;
+const today=()=>Math.floor(Date.now()/DAY);
+const defaults=()=>({cards:{},dec:[],hist:[],streak:{last:null,n:0},checks:{},dlg:0,ver:1});
+let S=defaults();
+
+function load(){
+  try{const r=localStorage.getItem(KEY); if(r){const p=JSON.parse(r); if(p&&p.ver===1) S=Object.assign(defaults(),p);} }catch(e){}
+}
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+function card(id){ if(!S.cards[id]) S.cards[id]={due:today(),iv:0,ease:2.5,reps:0,lapse:0,seen:0,wrong:0}; return S.cards[id]; }
+function dueList(){ const t=today(); return DECK.filter(c=>{const m=S.cards[c.id]; return !m||m.due<=t;}); }
+function knownCount(){ return Object.values(S.cards).filter(m=>m.iv>=7).length; }
+function accuracy(){ const h=S.hist.slice(-60); if(!h.length) return null; return Math.round(100*h.filter(x=>x).length/h.length); }
+function decodeAvg(){ if(S.dec.length<3) return null; const a=S.dec.slice(-40); return (a.reduce((x,y)=>x+y,0)/a.length/1000).toFixed(1); }
+function logHit(ok){ S.hist.push(ok?1:0); if(S.hist.length>400) S.hist=S.hist.slice(-400); }
+function touchStreak(){
+  const t=today();
+  if(S.streak.last===t) return;
+  S.streak.n = (S.streak.last===t-1)? S.streak.n+1 : 1;
+  S.streak.last=t; save();
+}
+
+/* SM-2 lite */
+const IVS=[0,1,3,7,14,30,60,120];
+function schedule(id,g){
+  const m=card(id); m.reps++; m.seen++;
+  if(g===0){ m.lapse++; m.wrong++; m.iv=0; m.ease=Math.max(1.4,m.ease-.2); m.due=today(); }
+  else{
+    if(g===1){ m.ease=Math.max(1.4,m.ease-.1); m.iv=Math.max(1,Math.round(Math.max(1,m.iv)*1.2)); }
+    else if(g===2){ m.iv = m.iv? Math.round(m.iv*m.ease) : 1; }
+    else { m.ease=Math.min(3.2,m.ease+.1); m.iv = m.iv? Math.round(m.iv*m.ease*1.35) : 3; }
+    m.iv=Math.min(m.iv,180); m.due=today()+m.iv;
+  }
+  logHit(g>0); touchStreak(); save(); paintStats();
+}
+function nextIv(id,g){
+  const m=card(id);
+  if(g===0) return "now";
+  if(g===1) return Math.max(1,Math.round(Math.max(1,m.iv)*1.2))+"d";
+  if(g===2) return (m.iv?Math.round(m.iv*m.ease):1)+"d";
+  return (m.iv?Math.round(m.iv*m.ease*1.35):3)+"d";
+}
+
+/* ══════════════════ HELPERS ══════════════════ */
+const $=s=>document.querySelector(s);
+const el=(t,c,h)=>{const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;};
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const plain=s=>s.replace(/́/g,"");
+const shuffle=a=>{const b=a.slice(); for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b;};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+
+function norm(s){
+  return plain(String(s)).toLowerCase().replace(/ё/g,"е")
+    .replace(/[.,!?;:"'«»()—–-]/g," ").replace(/\s+/g," ").trim();
+}
+function lev(a,b){
+  const m=a.length,n=b.length; if(!m)return n; if(!n)return m;
+  let prev=Array.from({length:n+1},(_,i)=>i),cur=new Array(n+1);
+  for(let i=1;i<=m;i++){ cur[0]=i;
+    for(let j=1;j<=n;j++) cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));
+    [prev,cur]=[cur,prev];
+  }
+  return prev[n];
+}
+function judge(given,want){
+  const g=norm(given),w=norm(want);
+  if(!g) return "no";
+  if(g===w) return "ok";
+  return lev(g,w)<=Math.max(1,Math.floor(w.length*0.12)) ? "near" : "no";
+}
+
+/* speech */
+let VOICE=null, RATE=.85;
+function initVoice(){
+  if(!("speechSynthesis" in window)){ $("#voicewarn").textContent="This browser has no speech synthesis — audio drills are text-only."; return; }
+  const set=()=>{
+    const vs=speechSynthesis.getVoices().filter(v=>/^ru/i.test(v.lang));
+    VOICE=vs.find(v=>v.localService)||vs[0]||null;
+    $("#voicewarn").textContent = VOICE ? "" : "No Russian voice installed — add a ru-RU voice in your OS settings for audio drills.";
+  };
+  set(); speechSynthesis.onvoiceschanged=set;
+}
+function speak(text){
+  if(!("speechSynthesis" in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(plain(text));
+    u.lang="ru-RU"; u.rate=RATE; if(VOICE)u.voice=VOICE;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function flash(node,ok){
+  node.classList.remove("flash-ok","flash-no");
+  void node.offsetWidth;
+  node.classList.add(ok?"flash-ok":"flash-no");
+  setTimeout(()=>node.classList.remove("flash-ok","flash-no"),700);
+}
+function speakBtn(text){ return `<button class="btn ghost sm" data-speak="${esc(text)}">▸ Слушать</button>`; }
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-speak]"); if(b) speak(b.getAttribute("data-speak"));
+});
+
+/* ══════════════════ NAV ══════════════════ */
+const VIEWS=[
+ ["today","Сего́дня","Today"],["decode","Деко́дер","Decoder"],["cards","Ка́рточки","Cards"],
+ ["patterns","Шабло́ны","Patterns"],["verbs","Глаго́лы","Verbs"],["cases","Падежи́","Cases"],
+ ["dialog","Диало́ги","Dialogues"],["sprint","Спринт","Sprint"],["errors","Оши́бки","Errors"],["course","Курс","Course"]
+];
+const RENDER={};
+let cur="today";
+function buildNav(){
+  const n=$("#nav"); n.innerHTML="";
+  VIEWS.forEach(([id,ru],i)=>{
+    const b=el("button","",`<span class="n mono">${String(i+1).padStart(2,"0")}</span><span class="t">${ru}</span>`);
+    b.onclick=()=>go(id);
+    b.id="nav-"+id;
+    n.appendChild(b);
+  });
+}
+function go(id){
+  cur=id;
+  VIEWS.forEach(([v])=>{
+    $("#p-"+v).classList.toggle("on",v===id);
+    const b=$("#nav-"+v); if(b) b.setAttribute("aria-current",String(v===id));
+  });
+  RENDER[id] && RENDER[id]();
+  window.scrollTo(0,0);
+}
+function paintStats(){
+  const d=dueList().length;
+  $("#s-due").textContent=d;
+  $("#s-known").textContent=knownCount()+"/"+DECK.length;
+  $("#s-streak").textContent=S.streak.n;
+  const a=accuracy(); $("#s-acc").textContent=a==null?"—":a+"%";
+  const dc=decodeAvg(); $("#s-dec").textContent=dc==null?"—":dc+"s";
+  const nb=$("#nav-cards");
+  if(nb){
+    let bd=nb.querySelector(".badge");
+    if(d>0){ if(!bd){bd=el("span","badge mono");nb.appendChild(bd);} bd.textContent=d; }
+    else if(bd) bd.remove();
+  }
+}
+
+/* ══════════════════ 01 · TODAY ══════════════════ */
+const BLOCKS=[
+ ["10","Деко́дер",'Cognate flash-reading. Target: under 1.5s per word.',"decode"],
+ ["12","Ка́рточки",'Clear the SRS queue. Grade honestly — "Again" costs nothing, false "Easy" costs weeks.',"cards"],
+ ["10","Шабло́ны + Глаго́лы",'One pattern, ten of your own sentences, out loud. Then conjugation drill.',"patterns"],
+ ["12","Падежи́",'Case drill. This is the wall every learner hits — do it daily, not in bursts.',"cases"],
+ ["10","Диало́г",'Shadow one dialogue. Listen, repeat over the voice, then take one role cold.',"dialog"],
+ ["6","Спринт",'Rapid response, out loud, no writing. Speed over accuracy here.',"sprint"]
+];
+RENDER.today=()=>{
+  const t=today(), ck=S.checks[t]||(S.checks[t]={});
+  const dueN=dueList().length;
+  const p=$("#p-today");
+  p.innerHTML=`
+   <div class="eyebrow">Session 60 min · A1 speaking track</div>
+   <h2 class="sect">Сего́дня</h2>
+   <p class="lede">Today's objective: <b>introduce yourself, say where you're from and what you do, and ask the same back — without pausing to assemble the sentence.</b> That is the whole target. Everything below feeds it.</p>
+   <div class="plan" id="plan"></div>
+   <hr class="rule">
+   <div class="grid2">
+     <div class="box"><h3>Rule of the day</h3><p><b>Russian has no “is”.</b> <span class="mono">Он до́ктор</span> — he doctor. <span class="mono">Э́то мой друг</span> — this my friend. If you catch yourself hunting for the verb, you're translating from English instead of thinking in Russian.</p></div>
+     <div class="box"><h3>Sound of the day</h3><p>Unstressed <b>о</b> is pronounced <b>а</b>. <span class="mono">молоко́</span> = ma-la-KO. <span class="mono">хорошо́</span> = kha-ra-SHO. Get this wrong and you sound foreign even with perfect grammar — get it right and you sound native even with broken grammar.</p></div>
+     <div class="box"><h3>Queue</h3><p><span class="mono" style="font-size:1.4rem;color:var(--red)">${dueN}</span> cards due. ${dueN>25?"Big queue — clear it before adding anything new.":"Manageable. Clear it, then push into new material."}</p></div>
+     <div class="box"><h3>Homework (out loud, 3 min)</h3><p>Record yourself answering: <span class="mono">Как тебя́ зову́т? Отку́да ты? Где ты живёшь? Кем ты рабо́таешь?</span> Play it back. The pauses are your real curriculum.</p></div>
+   </div>`;
+  const box=$("#plan");
+  BLOCKS.forEach(([min,name,desc,view],i)=>{
+    const done=!!ck[i];
+    const b=el("div","blk"+(done?" done":""),
+      `<div class="min">${min} min</div><div class="what"><b>${name}</b><span>${desc}</span></div><div class="tick">✓</div>`);
+    b.onclick=ev=>{
+      if(ev.target.closest(".tick")||ev.shiftKey){ ck[i]=!ck[i]; save(); RENDER.today(); return; }
+      go(view);
+    };
+    box.appendChild(b);
+  });
+};
+
+/* ══════════════════ 02 · DECODER ══════════════════ */
+let decQ=[],decI=0,decT=0;
+RENDER.decode=()=>{
+  const p=$("#p-decode");
+  p.innerHTML=`
+   <div class="eyebrow">Module 02 · reading reflex</div>
+   <h2 class="sect">Деко́дер</h2>
+   <p class="lede">Every word here is an international word you already know — <i>if</i> you decode the letters fast enough. That isolates pure reading speed from vocabulary. Watch the false friends: <b class="mono">Р=r · Н=n · С=s · В=v · У=u · Х=kh · Ч=ch · Ц=ts · Я=ya · Ы=y</b>.</p>
+   <div class="stage" id="decstage"></div>
+   <div class="progress"><i id="decbar" style="width:0%"></i></div>
+   <div class="row" style="margin-top:14px"><button class="btn ghost sm" id="decnew">New set of 12</button><span class="tagline" id="decinfo"></span></div>`;
+  $("#decnew").onclick=()=>{decQ=shuffle(DECODE).slice(0,12);decI=0;decStep();};
+  decQ=shuffle(DECODE).slice(0,12); decI=0; decStep();
+};
+function decStep(){
+  const st=$("#decstage"),bar=$("#decbar"),info=$("#decinfo");
+  if(!st) return;
+  bar.style.width=(decI/decQ.length*100)+"%";
+  if(decI>=decQ.length){
+    const avg=decodeAvg();
+    st.innerHTML=`<div class="ru sm">Сет зако́нчен</div><div class="en">Rolling average: <b class="mono">${avg?avg+"s":"—"}</b> per word. ${avg&&avg<1.5?"That is reflex speed. Push into unstressed real vocabulary next.":"Target is under 1.5s. Run it again."}</div>`;
+    info.textContent="";
+    return;
+  }
+  const [ru,en]=decQ[decI];
+  const opts=shuffle([en,...shuffle(DECODE.filter(d=>d[1]!==en)).slice(0,3).map(d=>d[1])]);
+  st.innerHTML=`<div class="ru">${ru}</div><div class="choices"></div>`;
+  info.textContent=`${decI+1} / ${decQ.length}`;
+  const cbox=st.querySelector(".choices");
+  decT=performance.now();
+  opts.forEach(o=>{
+    const b=el("button","",esc(o));
+    b.onclick=()=>{
+      const ms=performance.now()-decT;
+      const ok=o===en;
+      if(ok){ S.dec.push(Math.min(ms,8000)); if(S.dec.length>200)S.dec=S.dec.slice(-200); }
+      logHit(ok); touchStreak(); save(); paintStats();
+      Array.from(cbox.children).forEach(x=>{
+        x.disabled=true;
+        if(x.textContent===en)x.classList.add("right");
+        else if(x===b)x.classList.add("wrong");
+      });
+      const t=el("div","tagline",ok?`${(ms/1000).toFixed(2)}s`:`${ru} = ${esc(en)}`);
+      st.appendChild(t); flash(st,ok);
+      setTimeout(()=>{decI++;decStep();},ok?520:1400);
+    };
+    cbox.appendChild(b);
+  });
+}
+
+/* ══════════════════ 03 · CARDS ══════════════════ */
+let cq=[],cqi=0,cdir="ru2en",cshown=false,cfilter=null;
+RENDER.cards=()=>{
+  const p=$("#p-cards");
+  p.innerHTML=`
+   <div class="eyebrow">Module 03 · spaced repetition</div>
+   <h2 class="sect">Ка́рточки</h2>
+   <p class="lede">Sentences, never isolated words — you will never need the word <i>«время»</i> alone, you will need <i>«У меня́ нет вре́мени»</i>. Grade by what happened in your head <i>before</i> you saw the answer.</p>
+   <div class="row" style="margin-bottom:12px">
+     <div class="chips" id="dirchips">
+       <button class="chip" data-d="ru2en" aria-pressed="true">RU → EN (recognise)</button>
+       <button class="chip" data-d="en2ru" aria-pressed="false">EN → RU (produce)</button>
+       <button class="chip" data-d="audio" aria-pressed="false">Audio → meaning</button>
+     </div>
+   </div>
+   <div class="chips" id="topchips" style="margin-bottom:14px"></div>
+   <div class="stage" id="cstage"></div>
+   <div class="progress"><i id="cbar" style="width:0%"></i></div>
+   <div class="row" style="margin-top:12px">
+     <button class="btn ghost sm" id="cdue">Due only</button>
+     <button class="btn ghost sm" id="call">Shuffle all</button>
+     <span class="tagline" id="cinfo"></span>
+   </div>`;
+  const tc=$("#topchips");
+  tc.appendChild(Object.assign(el("button","chip","All topics"),{onclick:()=>{cfilter=null;buildQ(true);}}));
+  TOPICS.forEach(([k,l])=>{
+    const b=el("button","chip",l); b.onclick=()=>{cfilter=k;buildQ(true);}; tc.appendChild(b);
+  });
+  $("#dirchips").onclick=e=>{
+    const b=e.target.closest("[data-d]"); if(!b)return;
+    cdir=b.dataset.d;
+    Array.from($("#dirchips").children).forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    cShow();
+  };
+  $("#cdue").onclick=()=>buildQ(true);
+  $("#call").onclick=()=>buildQ(false);
+  buildQ(true);
+};
+function buildQ(onlyDue){
+  let base = onlyDue? dueList() : DECK.slice();
+  if(cfilter) base=base.filter(c=>c.t===cfilter);
+  if(!base.length) base = (cfilter? DECK.filter(c=>c.t===cfilter) : DECK.slice());
+  cq=shuffle(base); cqi=0;
+  Array.from($("#topchips").children).forEach((x,i)=>x.setAttribute("aria-pressed",String((i===0&&!cfilter)||(cfilter&&TOPICS[i-1]&&TOPICS[i-1][0]===cfilter))));
+  cShow();
+}
+function cShow(){
+  const st=$("#cstage"); if(!st) return;
+  $("#cbar").style.width=(cqi/Math.max(1,cq.length)*100)+"%";
+  if(cqi>=cq.length){
+    st.innerHTML=`<div class="ru sm">Очередь пуста́</div><div class="en">Queue cleared. Next cards come back on schedule — check the <b>Due now</b> counter above.</div>`;
+    $("#cinfo").textContent=""; return;
+  }
+  const c=cq[cqi]; cshown=false;
+  $("#cinfo").textContent=`${cqi+1} / ${cq.length}`;
+  const front = cdir==="en2ru" ? `<div class="en" style="font-size:1.25rem">${esc(c.en)}</div>`
+              : cdir==="audio" ? `<div class="ru sm">🔊</div>${speakBtn(c.ru)}`
+              : `<div class="ru">${c.ru}</div>`;
+  st.innerHTML=`<div class="tagline">${c.t} · tier ${c.tier}</div>${front}
+    <div class="row" style="justify-content:center"><button class="btn" id="reveal">Show answer <span class="mono" style="opacity:.6">space</span></button></div>`;
+  if(cdir==="audio") speak(c.ru);
+  $("#reveal").onclick=cReveal;
+}
+function cReveal(){
+  const st=$("#cstage"),c=cq[cqi]; if(!c||cshown)return; cshown=true;
+  st.innerHTML=`<div class="tagline">${c.t} · tier ${c.tier}</div>
+    <div class="ru">${c.ru}</div>
+    <div class="en">${esc(c.en)}</div>
+    ${c.note?`<div class="note">${esc(c.note)}</div>`:""}
+    <div class="row" style="justify-content:center">${speakBtn(c.ru)}</div>
+    <div class="grades" id="grades">
+      <button data-g="0"><span class="lab">Again</span><span class="iv">${nextIv(c.id,0)}</span></button>
+      <button data-g="1"><span class="lab">Hard</span><span class="iv">${nextIv(c.id,1)}</span></button>
+      <button data-g="2"><span class="lab">Good</span><span class="iv">${nextIv(c.id,2)}</span></button>
+      <button data-g="3"><span class="lab">Easy</span><span class="iv">${nextIv(c.id,3)}</span></button>
+    </div>`;
+  speak(c.ru);
+  $("#grades").onclick=e=>{
+    const b=e.target.closest("[data-g]"); if(!b)return;
+    schedule(c.id,+b.dataset.g);
+    if(+b.dataset.g===0) cq.push(c);
+    cqi++; cShow();
+  };
+}
+document.addEventListener("keydown",e=>{
+  if(cur!=="cards") return;
+  if(e.target.tagName==="INPUT") return;
+  if(e.code==="Space"){ e.preventDefault(); cshown?0:cReveal(); }
+  if(cshown&&["1","2","3","4"].includes(e.key)){
+    const c=cq[cqi]; if(!c)return;
+    const g=+e.key-1; schedule(c.id,g); if(g===0)cq.push(c); cqi++; cShow();
+  }
+});
+
+/* ══════════════════ 04 · PATTERNS ══════════════════ */
+RENDER.patterns=()=>{
+  const p=$("#p-patterns");
+  p.innerHTML=`
+   <div class="eyebrow">Module 04 · sentence engines</div>
+   <h2 class="sect">Шабло́ны</h2>
+   <p class="lede">Twelve frames. Each one generates hundreds of sentences once you can fill the slot without thinking. Pick one, say <b>ten</b> of your own out loud, then check yourself against the examples.</p>
+   ${PATTERNS.map(x=>`
+     <div class="pat">
+       <div class="p mono">${x.p}</div>
+       <div class="g">${esc(x.g)}</div>
+       <div style="margin-top:6px" class="row">${x.ex.map(e=>`<button class="btn ghost sm" data-speak="${esc(e)}">${e}</button>`).join("")}</div>
+     </div>`).join("")}
+   <hr class="rule">
+   <div class="box">
+     <h3>Why this beats memorising sentences</h3>
+     <p>A memorised sentence gives you one sentence. A frame with an open slot gives you every sentence that fits it. Fluency is not a large stock of sentences — it is a small stock of frames you can fill under time pressure.</p>
+   </div>`;
+};
+
+/* ══════════════════ 05 · VERBS ══════════════════ */
+let vCur=null,vPer=0;
+RENDER.verbs=()=>{
+  const p=$("#p-verbs");
+  p.innerHTML=`
+   <div class="eyebrow">Module 05 · conjugation</div>
+   <h2 class="sect">Глаго́лы</h2>
+   <p class="lede">Type the form. Stress marks optional — I only check the letters. Get the ending automatic and half of Russian speech falls into place.</p>
+   <div class="stage" id="vstage"></div>
+   <div class="row" style="margin-top:12px"><button class="btn ghost sm" id="vskip">Skip</button><button class="btn ghost sm" id="vtable">Show full table</button></div>
+   <div id="vtablebox" style="margin-top:14px"></div>`;
+  $("#vskip").onclick=vNext;
+  $("#vtable").onclick=()=>{
+    const b=$("#vtablebox");
+    if(b.innerHTML){b.innerHTML="";return;}
+    b.innerHTML=`<div class="scroller"><table><thead><tr><th>Infinitive</th><th>я</th><th>ты</th><th>он</th><th>мы</th><th>вы</th><th>они</th><th>Note</th></tr></thead><tbody>
+    ${VERBS.map(v=>`<tr><td><b>${v.inf}</b><br><span style="color:var(--ink3);font-size:.8rem">${esc(v.en)}</span></td>${v.f.map(f=>`<td class="mono">${f}</td>`).join("")}<td style="font-size:.8rem;color:var(--ink2)">${esc(v.cls)}</td></tr>`).join("")}
+    </tbody></table></div>`;
+  };
+  vNext();
+};
+function vNext(){
+  vCur=pick(VERBS); vPer=Math.floor(Math.random()*6);
+  const st=$("#vstage"); if(!st)return;
+  st.innerHTML=`
+    <div class="tagline">${esc(vCur.cls)}</div>
+    <div class="ru sm">${vCur.inf} <span style="color:var(--ink3);font-size:1rem">— ${esc(vCur.en)}</span></div>
+    <div class="en">Form for <b class="mono" style="font-size:1.1rem;color:var(--red)">${PERSONS[vPer]}</b></div>
+    <div class="answerline"><input type="text" class="ru-in" id="vin" autocomplete="off" spellcheck="false" placeholder="…"><button class="btn" id="vgo">Check</button></div>`;
+  const inp=$("#vin");
+  const go=()=>{
+    const v=judge(inp.value,vCur.f[vPer]);
+    logHit(v==="ok"); touchStreak(); save(); paintStats();
+    flash(st,v!=="no");
+    st.insertAdjacentHTML("beforeend",
+      `<div class="verdict ${v}">${v==="ok"?"Ве́рно":v==="near"?"Почти́ — check the letters":"Не ве́рно"}</div>
+       <div class="ru sm">${vCur.f[vPer]}</div>
+       <div class="row" style="justify-content:center">${speakBtn(vCur.f[vPer])}<button class="btn sm" id="vnext">Next</button></div>`);
+    inp.disabled=true; $("#vgo").disabled=true;
+    speak(vCur.f[vPer]);
+    $("#vnext").onclick=vNext;
+    $("#vnext").focus();
+  };
+  $("#vgo").onclick=go;
+  inp.onkeydown=e=>{ if(e.key==="Enter"){e.preventDefault();go();} };
+  inp.focus();
+}
+
+/* ══════════════════ 06 · CASES ══════════════════ */
+let caseCur=null;
+RENDER.cases=()=>{
+  const p=$("#p-cases");
+  p.innerHTML=`
+   <div class="eyebrow">Module 06 · the six cases</div>
+   <h2 class="sect">Падежи́</h2>
+   <p class="lede">Put the bracketed word into the right form. Cases are not decoration — they carry the meaning that English carries with word order. <span class="mono">Я е́ду в Москву́</span> and <span class="mono">Я живу́ в Москве́</span> differ by one letter and mean completely different things.</p>
+   <div class="stage" id="castage"></div>
+   <div class="row" style="margin-top:12px"><button class="btn ghost sm" id="caskip">Skip</button><button class="btn ghost sm" id="camap">Case cheat-sheet</button></div>
+   <div id="camapbox" style="margin-top:14px"></div>`;
+  $("#caskip").onclick=caNext;
+  $("#camap").onclick=()=>{
+    const b=$("#camapbox"); if(b.innerHTML){b.innerHTML="";return;}
+    b.innerHTML=`<div class="scroller"><table><thead><tr><th>Case</th><th>Core job</th><th>Triggers you'll actually meet</th></tr></thead><tbody>
+     <tr><td class="lv">Nom</td><td>The subject — who does it</td><td class="mono">Э́то дом. Он рабо́тает.</td></tr>
+     <tr><td class="lv">Acc</td><td>Direct object, and motion <i>into</i></td><td class="mono">Я люблю́ му́зыку. Я иду́ в шко́лу.</td></tr>
+     <tr><td class="lv">Gen</td><td>Of / absence / after 2–4 and 5+</td><td class="mono">нет, из, у, для, без, мно́го</td></tr>
+     <tr><td class="lv">Dat</td><td>To whom — recipient, and the “мне” constructions</td><td class="mono">Мне нра́вится. Я звоню́ ма́ме. к, по</td></tr>
+     <tr><td class="lv">Inst</td><td>By means of / together with / being something</td><td class="mono">с, рабо́тать инжене́ром, ру́чкой</td></tr>
+     <tr><td class="lv">Prep</td><td>Location, and topic of speech</td><td class="mono">в, на, о — always after these three</td></tr>
+    </tbody></table></div>`;
+  };
+  caNext();
+};
+function caNext(){
+  caseCur=pick(CASES);
+  const st=$("#castage"); if(!st)return;
+  st.innerHTML=`
+    <div class="tagline">${esc(caseCur.c)}</div>
+    <div class="ru sm">${caseCur.s.replace("___",'<span style="color:var(--red)">___</span>')}</div>
+    <div class="en">( ${caseCur.base} )</div>
+    <div class="answerline"><input type="text" class="ru-in" id="cain" autocomplete="off" spellcheck="false" placeholder="…"><button class="btn" id="cago">Check</button></div>`;
+  const inp=$("#cain");
+  const go=()=>{
+    const v=judge(inp.value,caseCur.a);
+    logHit(v==="ok"); touchStreak(); save(); paintStats();
+    flash(st,v!=="no");
+    const full=caseCur.s.replace("___",caseCur.a);
+    st.insertAdjacentHTML("beforeend",
+      `<div class="verdict ${v}">${v==="ok"?"Ве́рно":v==="near"?"Почти́":"Не ве́рно"}</div>
+       <div class="ru sm">${full}</div>
+       <div class="note">${esc(caseCur.why)}</div>
+       <div class="row" style="justify-content:center">${speakBtn(full)}<button class="btn sm" id="canext">Next</button></div>`);
+    inp.disabled=true; $("#cago").disabled=true;
+    $("#canext").onclick=caNext; $("#canext").focus();
+  };
+  $("#cago").onclick=go;
+  inp.onkeydown=e=>{ if(e.key==="Enter"){e.preventDefault();go();} };
+  inp.focus();
+}
+
+/* ══════════════════ 07 · DIALOGUES ══════════════════ */
+RENDER.dialog=()=>{
+  const p=$("#p-dialog");
+  const d=DIALOGS[S.dlg%DIALOGS.length];
+  p.innerHTML=`
+   <div class="eyebrow">Module 07 · listening & shadowing</div>
+   <h2 class="sect">Диало́ги</h2>
+   <p class="lede">Five rounds, in this order: <b>1</b> play it whole, get the gist. <b>2</b> play again, catch specifics. <b>3</b> reconstruct lines from memory. <b>4</b> unblur the translation to check. <b>5</b> shadow — speak over the voice, same rhythm, same speed.</p>
+   <div class="chips" id="dchips" style="margin-bottom:14px">
+     ${DIALOGS.map((x,i)=>`<button class="chip" data-i="${i}" aria-pressed="${i===S.dlg%DIALOGS.length}">${x.title}</button>`).join("")}
+   </div>
+   <div class="row" style="margin-bottom:12px">
+     <button class="btn red sm" id="dplay">▸ Play whole dialogue</button>
+     <button class="btn ghost sm" id="dtr">Reveal all translations</button>
+     <span class="tagline">${esc(d.en)}</span>
+   </div>
+   <div class="dlg" id="dlines"></div>`;
+  const box=$("#dlines");
+  d.lines.forEach(([who,ru,en])=>{
+    const l=el("div","line "+(who==="A"?"a":"b"),
+      `<div class="who">${who}</div><div><div class="ru">${ru}</div><div class="tr hide">${esc(en)}</div>
+       <button class="sp" data-speak="${esc(ru)}">▸ replay this line</button></div>`);
+    l.querySelector(".tr").onclick=e=>e.target.classList.toggle("hide");
+    box.appendChild(l);
+  });
+  $("#dchips").onclick=e=>{ const b=e.target.closest("[data-i]"); if(!b)return; S.dlg=+b.dataset.i; save(); RENDER.dialog(); };
+  $("#dtr").onclick=()=>box.querySelectorAll(".tr").forEach(x=>x.classList.toggle("hide"));
+  $("#dplay").onclick=()=>playAll(d);
+};
+function playAll(d){
+  if(!("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  d.lines.forEach(([w,ru],i)=>{
+    const u=new SpeechSynthesisUtterance(plain(ru));
+    u.lang="ru-RU"; u.rate=RATE; if(VOICE)u.voice=VOICE;
+    u.onstart=()=>{
+      const nodes=document.querySelectorAll("#dlines .line");
+      nodes.forEach(n=>n.style.boxShadow="none");
+      if(nodes[i]) nodes[i].style.boxShadow="inset 3px 0 0 var(--red)";
+    };
+    speechSynthesis.speak(u);
+  });
+}
+
+/* ══════════════════ 08 · SPRINT ══════════════════ */
+let spMode="trans",spQ=[],spI=0,spStart=0,spScore=0,spTimer=null,spLeft=60;
+RENDER.sprint=()=>{
+  const p=$("#p-sprint");
+  p.innerHTML=`
+   <div class="eyebrow">Module 08 · automaticity under pressure</div>
+   <h2 class="sect">Спринт</h2>
+   <p class="lede">Sixty seconds. Speed is the point — a correct sentence you needed eight seconds to build is not usable in a real conversation. Accept errors here; you are training retrieval latency, not accuracy.</p>
+   <div class="chips" style="margin-bottom:14px" id="spchips">
+     <button class="chip" data-m="trans" aria-pressed="true">Translation sprint (EN→RU, typed)</button>
+     <button class="chip" data-m="rapid" aria-pressed="false">Rapid response (out loud)</button>
+     <button class="chip" data-m="recall" aria-pressed="false">Recall sprint (RU→EN)</button>
+   </div>
+   <div class="stage" id="spstage">
+     <div class="ru sm">Гото́в?</div>
+     <div class="en">Pick a mode above, then start. The clock does not stop.</div>
+     <div class="row" style="justify-content:center"><button class="btn red" id="spstart">Start 60s</button></div>
+   </div>
+   <div class="progress"><i id="spbar" style="width:100%"></i></div>
+   <div class="row" style="margin-top:12px"><span class="tagline" id="spinfo"></span></div>`;
+  $("#spchips").onclick=e=>{ const b=e.target.closest("[data-m]"); if(!b)return; spMode=b.dataset.m;
+    Array.from($("#spchips").children).forEach(x=>x.setAttribute("aria-pressed",String(x===b))); };
+  $("#spstart").onclick=spBegin;
+};
+function spBegin(){
+  spQ = spMode==="rapid" ? shuffle(RAPID) : shuffle(DECK.filter(c=>c.tier<=2));
+  spI=0; spScore=0; spLeft=60;
+  clearInterval(spTimer);
+  spTimer=setInterval(()=>{
+    spLeft--; const b=$("#spbar"); if(b) b.style.width=(spLeft/60*100)+"%";
+    const i=$("#spinfo"); if(i) i.textContent=`${spLeft}s · ${spScore} correct`;
+    if(spLeft<=0) spEnd();
+  },1000);
+  spStep();
+}
+function spEnd(){
+  clearInterval(spTimer); spTimer=null;
+  const st=$("#spstage"); if(!st)return;
+  const rate=(spScore/60*60).toFixed(0);
+  st.innerHTML=`<div class="ru sm">Вре́мя!</div>
+   <div class="en"><b class="mono" style="font-size:1.6rem;color:var(--red)">${spScore}</b> in 60 seconds — that's ${(60/Math.max(1,spScore)).toFixed(1)}s per item.</div>
+   <div class="note">${spScore>=12?"Conversational speed. Move the difficulty up.":spScore>=7?"Getting there. Under 5s per item is where conversation starts working.":"Slow — but this is the metric that improves fastest with daily reps."}</div>
+   <div class="row" style="justify-content:center"><button class="btn red" id="spagain">Go again</button></div>`;
+  $("#spagain").onclick=spBegin;
+  save(); paintStats();
+}
+function spStep(){
+  const st=$("#spstage"); if(!st||spLeft<=0)return;
+  if(spI>=spQ.length) spI=0;
+  if(spMode==="rapid"){
+    const [ru,en]=spQ[spI];
+    st.innerHTML=`<div class="tagline">Answer out loud, full sentence</div>
+      <div class="ru">${ru}</div>
+      <div class="row" style="justify-content:center">${speakBtn(ru)}
+        <button class="btn sm" id="spok">Said it ✓</button><button class="btn ghost sm" id="spno">Couldn't</button></div>
+      <div class="en" style="opacity:.55;font-size:.85rem">${esc(en)}</div>`;
+    speak(ru);
+    $("#spok").onclick=()=>{spScore++;logHit(true);spI++;spStep();};
+    $("#spno").onclick=()=>{logHit(false);spI++;spStep();};
+  } else if(spMode==="recall"){
+    const c=spQ[spI];
+    st.innerHTML=`<div class="ru">${c.ru}</div>
+      <div class="row" style="justify-content:center"><button class="btn sm" id="spok">Knew it ✓</button><button class="btn ghost sm" id="spno">Blank</button></div>`;
+    $("#spok").onclick=()=>{spScore++;logHit(true);schedule(c.id,2);spI++;spStep();};
+    $("#spno").onclick=()=>{logHit(false);schedule(c.id,0);spI++;spStep();};
+  } else {
+    const c=spQ[spI];
+    st.innerHTML=`<div class="tagline">Type it in Russian — stress marks not needed</div>
+      <div class="en" style="font-size:1.2rem">${esc(c.en)}</div>
+      <div class="answerline"><input type="text" class="ru-in" id="spin" autocomplete="off" spellcheck="false"><button class="btn" id="spgo">↵</button></div>`;
+    const inp=$("#spin");
+    const go=()=>{
+      const v=judge(inp.value,c.ru);
+      if(v!=="no"){spScore++;logHit(true);schedule(c.id,v==="ok"?2:1);}
+      else{logHit(false);schedule(c.id,0);}
+      flash(st,v!=="no");
+      if(v==="no"){
+        st.insertAdjacentHTML("beforeend",`<div class="ru sm" style="color:var(--red)">${c.ru}</div>`);
+        setTimeout(()=>{spI++;spStep();},1100);
+      } else {spI++;spStep();}
+    };
+    $("#spgo").onclick=go;
+    inp.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();go();}};
+    inp.focus();
+  }
+}
+
+/* ══════════════════ 09 · ERRORS ══════════════════ */
+RENDER.errors=()=>{
+  const p=$("#p-errors");
+  const rows=DECK.map(c=>({c,m:S.cards[c.id]})).filter(x=>x.m&&x.m.lapse>0)
+    .sort((a,b)=>b.m.lapse-a.m.lapse||a.m.iv-b.m.iv).slice(0,30);
+  const byTopic={};
+  DECK.forEach(c=>{const m=S.cards[c.id]; if(!m)return;
+    byTopic[c.t]=byTopic[c.t]||{seen:0,lapse:0};
+    byTopic[c.t].seen+=m.seen; byTopic[c.t].lapse+=m.lapse;});
+  const weak=Object.entries(byTopic).filter(x=>x[1].seen>=4)
+    .map(([k,v])=>({k,rate:v.lapse/v.seen,seen:v.seen})).sort((a,b)=>b.rate-a.rate);
+  const label=k=>(TOPICS.find(t=>t[0]===k)||[k,k])[1];
+  p.innerHTML=`
+   <div class="eyebrow">Module 09 · what's actually broken</div>
+   <h2 class="sect">Оши́бки</h2>
+   <p class="lede">Built from your own misses, not from a generic list of learner mistakes. If a topic here shows above 30% lapse, stop advancing and repair it before adding new material.</p>
+   <h3 style="font-size:.95rem;margin-bottom:8px">Weakest topics</h3>
+   ${weak.length?`<div class="scroller"><table><thead><tr><th>Topic</th><th>Reps</th><th>Lapse rate</th><th>Verdict</th></tr></thead><tbody>
+     ${weak.map(w=>`<tr><td><b>${label(w.k)}</b></td><td class="mono">${w.seen}</td><td class="mono">${Math.round(w.rate*100)}%</td>
+       <td><span class="pill ${w.rate>.3?"crit":w.rate>.15?"warn":"good"}">${w.rate>.3?"repair now":w.rate>.15?"watch":"solid"}</span></td></tr>`).join("")}
+   </tbody></table></div>`:`<p class="empty">No data yet — run a few card sessions and this fills in automatically.</p>`}
+   <hr class="rule">
+   <h3 style="font-size:.95rem;margin-bottom:8px">Leeches — items you keep forgetting</h3>
+   ${rows.length?`<div class="scroller"><table><thead><tr><th>Card</th><th>Meaning</th><th>Lapses</th><th></th></tr></thead><tbody>
+     ${rows.map(r=>`<tr><td class="ru sm" style="font-size:1rem;text-align:left">${r.c.ru}</td><td>${esc(r.c.en)}</td>
+        <td class="mono">${r.m.lapse}</td><td>${speakBtn(r.c.ru)}</td></tr>`).join("")}
+   </tbody></table></div>`:`<p class="empty">Nothing stuck yet. Cards you fail twice or more will appear here.</p>`}
+   <hr class="rule">
+   <div class="grid2">
+     <div class="box"><h3>The four errors that will cost you most</h3>
+       <p><b>1.</b> Using <span class="mono">идти́</span> when you're in a car — use <span class="mono">е́хать</span>.<br>
+       <b>2.</b> Saying <span class="mono">Я нра́влюсь му́зыку</span> — it's <span class="mono">Мне нра́вится му́зыка</span>; the thing you like is the subject.<br>
+       <b>3.</b> Forgetting the accusative on direct objects: <span class="mono">Я люблю́ Москву́</span>, not Москва́.<br>
+       <b>4.</b> Reducing stressed о. Stress is the single loudest accent marker in Russian.</p></div>
+     <div class="box"><h3>Session log</h3>
+       <div class="kv"><span>Answers recorded</span><b class="mono">${S.hist.length}</b></div>
+       <div class="kv"><span>Rolling accuracy (last 60)</span><b class="mono">${accuracy()==null?"—":accuracy()+"%"}</b></div>
+       <div class="kv"><span>Cards in circulation</span><b class="mono">${Object.keys(S.cards).length}</b></div>
+       <div class="kv"><span>Mature (7d+)</span><b class="mono">${knownCount()}</b></div>
+       <div class="kv"><span>Decode average</span><b class="mono">${decodeAvg()?decodeAvg()+"s":"—"}</b></div>
+     </div>
+   </div>`;
+};
+
+/* ══════════════════ 10 · COURSE ══════════════════ */
+RENDER.course=()=>{
+  $("#p-course").innerHTML=`
+   <div class="eyebrow">Module 10 · the road</div>
+   <h2 class="sect">Курс</h2>
+   <p class="lede">The sequence is genuinely ordered — each level is unusable without the one before it. At 45–60 minutes a day, six days a week, A2 is realistic in about six months and B1 inside eighteen. Anyone promising faster is selling something.</p>
+   <div class="scroller"><table>
+     <thead><tr><th>Level</th><th>When</th><th>Core content</th><th>What you can do</th><th>Exit test</th></tr></thead>
+     <tbody>${COURSE.map(c=>`<tr><td class="lv">${c.lv}</td><td class="mono" style="font-size:.78rem;color:var(--ink3)">${c.wk}</td>
+       <td>${esc(c.core)}</td><td>${esc(c.can)}</td><td style="color:var(--ink2)">${esc(c.test)}</td></tr>`).join("")}</tbody>
+   </table></div>
+   <hr class="rule">
+   <div class="grid2">
+     <div class="box"><h3>Immersion ratio</h3>
+       <div class="kv"><span>A1 — now</span><b class="mono">70% EN / 30% RU</b></div>
+       <div class="kv"><span>A2</span><b class="mono">50 / 50</b></div>
+       <div class="kv"><span>B1</span><b class="mono">25 / 75</b></div>
+       <div class="kv"><span>B2+</span><b class="mono">Russian by default</b></div>
+     </div>
+     <div class="box"><h3>The one rule that decides this</h3>
+       <p>Six short sessions beat one long one, every time. Forty minutes daily will take you further than five hours on Sunday, because retention is a function of <i>how many separate times</i> you retrieved something, not how long you stared at it.</p></div>
+   </div>`;
+};
+
+/* ══════════════════ BOOT ══════════════════ */
+load();
+buildNav();
+initVoice();
+$("#rate").onchange=e=>{RATE=parseFloat(e.target.value);};
+$("#themebtn").onclick=()=>{
+  const r=document.documentElement;
+  const dark=r.getAttribute("data-theme")==="dark" ||
+    (!r.getAttribute("data-theme") && matchMedia("(prefers-color-scheme:dark)").matches);
+  r.setAttribute("data-theme",dark?"light":"dark");
+};
+$("#resetbtn").onclick=()=>{
+  if(!confirm("Erase all progress — cards, streak, history? This cannot be undone.")) return;
+  S=defaults(); save(); paintStats(); go("today");
+};
+paintStats();
+go("today");
+</script>
