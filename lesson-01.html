@@ -1,0 +1,916 @@
+<title>Уро́к Пе́рвый</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap">
+<style>
+/* ═══ single deliberate dark world: midnight + gilt ═══ */
+:root{
+  --void:#07070F;
+  --deep:#0D0D1E;
+  --surface:rgba(24,24,48,.62);
+  --surface-2:rgba(32,32,62,.5);
+  --edge:rgba(232,184,75,.16);
+  --edge-soft:rgba(160,170,215,.13);
+
+  --gold:#E9BC57;        /* Russian text */
+  --gold-dim:#B8913E;
+  --ice:#E4E9F5;         /* English text */
+  --mist:#949CBB;        /* transliteration */
+  --rose:#F0707E;        /* warnings, stress */
+  --jade:#5FCFA4;        /* rules that work */
+  --violet:#8A76E8;
+  --cyan:#3FB2D6;
+
+  --w:min(940px,92vw);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--void); color:var(--ice);
+  font-family:"Manrope",system-ui,sans-serif; font-size:16px; line-height:1.68;
+  -webkit-text-size-adjust:100%; overflow-x:hidden;
+}
+::selection{background:rgba(233,188,87,.28);color:#fff}
+
+/* ═══ animated background stack ═══ */
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:var(--void)}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;will-change:transform}
+#b1{width:60vw;height:60vw;left:-18vw;top:-14vw;background:radial-gradient(circle,#2B2170 0%,rgba(43,33,112,0) 68%);animation:drift1 42s ease-in-out infinite}
+#b2{width:52vw;height:52vw;right:-14vw;top:22vh;background:radial-gradient(circle,#0E4A63 0%,rgba(14,74,99,0) 68%);animation:drift2 55s ease-in-out infinite}
+#b3{width:46vw;height:46vw;left:12vw;bottom:-16vw;background:radial-gradient(circle,#6A2438 0%,rgba(106,36,56,0) 70%);animation:drift3 63s ease-in-out infinite}
+#b4{width:38vw;height:38vw;right:8vw;bottom:8vh;background:radial-gradient(circle,#5A4310 0%,rgba(90,67,16,0) 70%);animation:drift4 49s ease-in-out infinite;opacity:.38}
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(9vw,7vh) scale(1.14)}66%{transform:translate(-5vw,12vh) scale(.92)}}
+@keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-11vw,-9vh) scale(1.2)}}
+@keyframes drift3{0%,100%{transform:translate(0,0) scale(1.05)}40%{transform:translate(12vw,-8vh) scale(.88)}75%{transform:translate(-6vw,4vh) scale(1.16)}}
+@keyframes drift4{0%,100%{transform:translate(0,0)}50%{transform:translate(-8vw,6vh) scale(1.25)}}
+#stars{position:absolute;inset:0;width:100%;height:100%;opacity:.85}
+#grain{
+  position:absolute;inset:-50%;opacity:.05;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/></filter><rect width='220' height='220' filter='url(%23n)' opacity='0.55'/></svg>");
+  animation:grainshift 7s steps(6) infinite;
+}
+@keyframes grainshift{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-2%)}80%{transform:translate(3%,1%)}100%{transform:translate(0,0)}}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(7,7,15,0) 35%,rgba(7,7,15,.72) 100%)}
+#glow{position:fixed;left:0;top:0;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;pointer-events:none;z-index:1;
+  background:radial-gradient(circle,rgba(233,188,87,.055) 0%,rgba(233,188,87,0) 62%);transition:transform .35s cubic-bezier(.2,.8,.2,1);opacity:0}
+
+/* ═══ reading progress ═══ */
+#bar{position:fixed;left:0;top:0;height:2px;z-index:40;width:0;
+  background:linear-gradient(90deg,var(--violet),var(--cyan),var(--gold));box-shadow:0 0 12px rgba(233,188,87,.5)}
+
+/* ═══ layout ═══ */
+main{position:relative;z-index:2;width:var(--w);margin:0 auto;padding:0 0 120px}
+section{margin:0 0 74px;animation:rise .8s cubic-bezier(.2,.8,.2,1) both}
+section:nth-of-type(1){animation-delay:.05s} section:nth-of-type(2){animation-delay:.1s}
+section:nth-of-type(3){animation-delay:.15s} section:nth-of-type(4){animation-delay:.2s}
+@keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+
+/* ═══ hero ═══ */
+header{padding:clamp(70px,13vh,140px) 0 60px;text-align:center;position:relative;animation:rise 1s cubic-bezier(.2,.8,.2,1) both}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold-dim)}
+h1{
+  font-family:"Playfair Display",Georgia,serif;font-weight:900;font-size:clamp(3.2rem,11vw,7rem);
+  line-height:.92;margin:16px 0 6px;letter-spacing:-.02em;
+  background:linear-gradient(102deg,#F6DFA6 0%,#E9BC57 34%,#B8913E 58%,#F3D389 82%,#E9BC57 100%);
+  background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shimmer 11s linear infinite;
+}
+@keyframes shimmer{0%{background-position:0% 50%}100%{background-position:260% 50%}}
+.h1-en{font-family:"Playfair Display",serif;font-style:italic;font-size:clamp(1rem,2.6vw,1.4rem);color:var(--mist);font-weight:700}
+.hero-obj{max-width:60ch;margin:34px auto 0;color:#C3CADD;font-size:1.06rem}
+.hero-obj b{color:var(--ice)}
+.orn{width:150px;height:1px;margin:40px auto 0;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);position:relative}
+.orn::after{content:"❋";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--gold);background:var(--void);padding:0 12px;font-size:.85rem;animation:spin 22s linear infinite}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+/* ═══ section heads ═══ */
+.snum{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.3em;color:var(--gold-dim);display:block;margin-bottom:10px}
+h2{font-family:"Playfair Display",serif;font-weight:700;font-size:clamp(1.7rem,4.4vw,2.5rem);line-height:1.12;margin:0;color:#F4E9CE;text-wrap:balance}
+h2 .ru-h{color:var(--gold);font-family:"PT Serif",Georgia,serif}
+.h2rule{height:1px;margin:16px 0 26px;background:linear-gradient(90deg,var(--gold-dim),rgba(233,188,87,0));position:relative;overflow:hidden}
+.h2rule::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);transform:translateX(-100%);animation:sweep 5.5s ease-in-out infinite}
+@keyframes sweep{0%,55%{transform:translateX(-100%)}85%,100%{transform:translateX(220%)}}
+h3{font-family:"Manrope",sans-serif;font-weight:700;font-size:1.02rem;letter-spacing:.02em;color:#F4E9CE;margin:36px 0 12px}
+h3 .g{color:var(--gold);font-family:"PT Serif",serif;font-weight:400}
+p{color:#BFC7DC;max-width:68ch;margin:0 0 16px}
+p b,li b{color:var(--ice)}
+p .ru,li .ru{font-family:"PT Serif",serif;color:var(--gold);font-size:1.05em}
+p .tl,li .tl{font-family:"JetBrains Mono",monospace;font-size:.82em;color:var(--mist)}
+ul{color:#BFC7DC;max-width:68ch;padding-left:20px}
+li{margin-bottom:9px}
+
+/* ═══ the phrase block — the page's core object ═══ */
+.ph{
+  position:relative;background:var(--surface);border:1px solid var(--edge-soft);
+  border-left:2px solid var(--gold-dim);border-radius:0 6px 6px 0;
+  padding:15px 17px 15px 19px;margin:0 0 10px;
+  backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);
+  transition:border-color .3s,transform .3s,background .3s;
+}
+.ph:hover{border-left-color:var(--gold);background:var(--surface-2);transform:translateX(4px)}
+.ph-ru{font-family:"PT Serif",Georgia,serif;font-size:1.42rem;line-height:1.35;color:var(--gold);font-weight:700;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.ph-tl{font-family:"JetBrains Mono",monospace;font-size:.79rem;letter-spacing:.02em;color:var(--mist);margin-top:3px}
+.ph-en{color:var(--ice);font-size:1rem;margin-top:5px}
+.ph-lit{color:#8E96B4;font-size:.85rem;font-style:italic;margin-top:3px}
+.ph-note{color:var(--jade);font-size:.85rem;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(95,207,164,.22)}
+.say{
+  background:rgba(233,188,87,.09);border:1px solid var(--edge);color:var(--gold);
+  border-radius:50%;width:26px;height:26px;min-width:26px;cursor:pointer;font-size:.7rem;
+  display:inline-grid;place-items:center;padding:0;transition:all .25s;flex-shrink:0;
+}
+.say:hover{background:var(--gold);color:var(--void);transform:scale(1.14)}
+.say.on{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(233,188,87,.5)}50%{box-shadow:0 0 0 8px rgba(233,188,87,0)}}
+.ph.big .ph-ru{font-size:1.85rem}
+
+/* ═══ tables ═══ */
+.tw{overflow-x:auto;border:1px solid var(--edge-soft);border-radius:6px;background:rgba(16,16,34,.55);backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px)}
+table{width:100%;border-collapse:collapse;font-size:.93rem;min-width:520px}
+th{
+  text-align:left;padding:11px 14px;font-family:"JetBrains Mono",monospace;font-size:.62rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dim);
+  border-bottom:1px solid var(--edge);white-space:nowrap;font-weight:500;
+}
+td{padding:10px 14px;border-bottom:1px solid rgba(160,170,215,.08);vertical-align:top;color:#C6CDE0}
+tbody tr{transition:background .22s}
+tbody tr:hover{background:rgba(233,188,87,.05)}
+tbody tr:last-child td{border-bottom:0}
+td.ru{font-family:"PT Serif",serif;color:var(--gold);font-size:1.16rem;font-weight:700;white-space:nowrap}
+td.tl{font-family:"JetBrains Mono",monospace;font-size:.78rem;color:var(--mist);white-space:nowrap}
+td.en{color:var(--ice)}
+td.hint{font-size:.85rem;color:#8E96B4}
+
+/* alphabet grid */
+.alpha{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:8px}
+.let{
+  background:rgba(20,20,42,.6);border:1px solid var(--edge-soft);border-radius:6px;padding:11px 12px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:all .3s;cursor:default;
+}
+.let:hover{border-color:var(--gold);background:rgba(40,34,20,.6);transform:translateY(-3px)}
+.let.trap{border-color:rgba(240,112,126,.34)}
+.let.trap:hover{border-color:var(--rose)}
+.let .ch{font-family:"PT Serif",serif;font-size:1.6rem;color:var(--gold);line-height:1;font-weight:700}
+.let.trap .ch{color:var(--rose)}
+.let .snd{font-family:"JetBrains Mono",monospace;font-size:.74rem;color:var(--ice);margin-top:5px}
+.let .ex{font-family:"PT Serif",serif;font-size:.98rem;color:#D5C08A;margin-top:7px}
+.let .extl{font-family:"JetBrains Mono",monospace;font-size:.67rem;color:var(--mist)}
+.let .exen{font-size:.78rem;color:#9AA2C0}
+
+/* callouts */
+.call{
+  border-radius:6px;padding:17px 20px;margin:24px 0;backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);
+  background:rgba(20,20,42,.6);border:1px solid var(--edge-soft);border-left:3px solid var(--violet);
+}
+.call.warn{border-left-color:var(--rose);background:rgba(50,20,28,.4)}
+.call.key{border-left-color:var(--gold);background:rgba(48,38,16,.36)}
+.call.win{border-left-color:var(--jade);background:rgba(16,44,34,.4)}
+.call h4{margin:0 0 8px;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-family:"JetBrains Mono",monospace;color:var(--gold-dim);font-weight:500}
+.call.warn h4{color:var(--rose)} .call.win h4{color:var(--jade)} .call h4{font-weight:500}
+.call p{margin:0;color:#CBD2E4}
+.call p+p{margin-top:10px}
+
+/* dialogue */
+.dl{display:flex;flex-direction:column;gap:8px}
+.dl .ln{
+  display:grid;grid-template-columns:30px 1fr;gap:12px;padding:13px 16px;border-radius:6px;
+  background:rgba(20,20,42,.55);border:1px solid var(--edge-soft);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:transform .3s,border-color .3s;
+}
+.dl .ln:hover{transform:translateX(5px);border-color:var(--edge)}
+.dl .ln.b{background:rgba(28,22,42,.55);border-left:2px solid var(--violet)}
+.dl .ln.a{border-left:2px solid var(--cyan)}
+.dl .who{font-family:"JetBrains Mono",monospace;font-size:.66rem;color:var(--mist);padding-top:7px;letter-spacing:.1em}
+
+/* test */
+.q{
+  background:rgba(20,20,42,.6);border:1px solid var(--edge-soft);border-radius:6px;margin-bottom:10px;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:hidden;transition:border-color .3s;
+}
+.q:hover{border-color:var(--edge)}
+.q .qh{display:flex;gap:13px;align-items:flex-start;padding:15px 18px;cursor:pointer;user-select:none}
+.q .qn{font-family:"JetBrains Mono",monospace;color:var(--gold-dim);font-size:.8rem;padding-top:2px;min-width:20px}
+.q .qt{flex:1;color:var(--ice)}
+.q .qt .ru{font-family:"PT Serif",serif;color:var(--gold);font-size:1.1em}
+.q .chev{color:var(--gold-dim);transition:transform .3s;font-size:.8rem;padding-top:4px}
+.q.open .chev{transform:rotate(180deg)}
+.q .qa{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.2,.8,.2,1)}
+.q.open .qa{max-height:420px}
+.q .qa-in{padding:0 18px 17px 51px;border-top:1px dashed rgba(233,188,87,.18);margin-top:0;padding-top:14px}
+
+/* misc */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(272px,1fr));gap:12px}
+.pairbox{background:rgba(20,20,42,.6);border:1px solid var(--edge-soft);border-radius:6px;padding:15px 17px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.pairbox .t{font-family:"JetBrains Mono",monospace;font-size:.63rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:9px}
+.mini{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid rgba(160,170,215,.08);font-size:.92rem}
+.mini:last-child{border-bottom:0}
+.mini .l{font-family:"PT Serif",serif;color:var(--gold);font-size:1.05rem}
+.mini .r{color:#AEB6CE;text-align:right;font-size:.86rem}
+#toolbar{
+  position:fixed;right:16px;bottom:16px;z-index:30;display:flex;flex-direction:column;gap:7px;
+}
+#toolbar button{
+  background:rgba(16,16,34,.9);border:1px solid var(--edge);color:var(--gold);border-radius:6px;
+  padding:8px 13px;font-size:.75rem;cursor:pointer;font-family:"JetBrains Mono",monospace;
+  backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);transition:all .25s;white-space:nowrap
+}
+#toolbar button:hover{background:var(--gold);color:var(--void)}
+#toolbar button[aria-pressed="true"]{background:var(--gold);color:var(--void)}
+body.hidetr .ph-en,body.hidetr .ph-lit,body.hidetr td.en,body.hidetr .let .exen,body.hidetr .dl .ph-en{
+  filter:blur(5px);transition:filter .25s;cursor:pointer
+}
+body.hidetr .ph-en:hover,body.hidetr .ph-lit:hover,body.hidetr td.en:hover,body.hidetr .let .exen:hover{filter:none}
+footer{text-align:center;color:#6D7597;font-size:.83rem;padding-top:40px;border-top:1px solid var(--edge-soft)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:3px}
+@media (max-width:640px){
+  .ph-ru{font-size:1.24rem}.ph.big .ph-ru{font-size:1.5rem}
+  main{padding-bottom:90px}
+  section{margin-bottom:54px}
+  #toolbar{right:10px;bottom:10px}
+  #toolbar button{padding:7px 10px;font-size:.68rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  #glow{display:none}
+}
+</style>
+
+<div id="bg">
+  <div class="blob" id="b1"></div><div class="blob" id="b2"></div>
+  <div class="blob" id="b3"></div><div class="blob" id="b4"></div>
+  <canvas id="stars"></canvas>
+  <div id="grain"></div><div id="vig"></div>
+</div>
+<div id="glow"></div>
+<div id="bar"></div>
+
+<main>
+  <header>
+    <div class="kicker">Ру́сский язы́к · Russian · Lesson One</div>
+    <h1>Уро́к Пе́рвый</h1>
+    <div class="h1-en">“Lesson One” — <span style="font-family:'JetBrains Mono',monospace;font-style:normal;font-size:.85em">oo-ROK PYER-vy</span></div>
+    <p class="hero-obj">By the end of this page you can <b>introduce yourself, say where you're from, say what you do, ask all three back, and understand the reply.</b> Not recognise it — produce it, cold, without assembling the sentence in English first.</p>
+    <div class="orn"></div>
+  </header>
+
+  <section id="s-alpha">
+    <span class="snum">01 — ФУНДА́МЕНТ / THE FOUNDATION</span>
+    <h2>The <span class="ru-h">33</span> letters, and the six that lie to you</h2>
+    <div class="h2rule"></div>
+    <p>You already decode Cyrillic — slowly. Slow decoding is not a knowledge problem, it's a reflex problem, and reflexes are built by <b>volume at speed</b>, not by studying the table again. Read this table once, then never study it again; drill it instead.</p>
+    <p>Six letters are actively hostile: they look like Latin letters you know and make completely different sounds. Those are marked in <span style="color:var(--rose)">red</span> below. Every millisecond you lose to Russian reading is lost on those six.</p>
+    <div class="alpha" id="alpha"></div>
+    <div class="call warn">
+      <h4>The trap</h4>
+      <p>Your eye reads <span class="ru">Р</span> as <b>P</b>, <span class="ru">Н</span> as <b>H</b>, <span class="ru">С</span> as <b>C</b>, <span class="ru">В</span> as <b>B</b>, <span class="ru">У</span> as <b>Y</b>, <span class="ru">Х</span> as <b>X</b>. They are <b>r · n · s · v · oo · kh</b>. The word <span class="ru">РЕСТОРА́Н</span> <span class="tl">(ree-sta-RAN)</span> looks like “PECTOPAH” and means <b>restaurant</b>. Until that stops happening, everything else is slower than it should be.</p>
+    </div>
+  </section>
+
+  <section id="s-be">
+    <span class="snum">02 — ГЛА́ВНОЕ ПРА́ВИЛО / THE MAIN RULE</span>
+    <h2>Russian has no word for <span class="ru-h">“is”</span></h2>
+    <div class="h2rule"></div>
+    <p>In the present tense, Russian simply deletes the verb <i>to be</i>. There is no <i>am</i>, no <i>is</i>, no <i>are</i>. You put the two things next to each other and the sentence is finished.</p>
+    <div id="be-ex"></div>
+    <div class="call key">
+      <h4>Why this matters more than it looks</h4>
+      <p>This is the first place where translating from English breaks down. If you find yourself hunting for the verb, you are still constructing an English sentence and converting it. Russians don't delete the verb — for them it was never there. Train the habit now, in week one, and you skip a mistake that plagues learners for years.</p>
+    </div>
+    <h3>But it comes back in the past and the future <span class="g">— был / бу́ду</span></h3>
+    <p>The verb only disappears in the <b>present</b>. Past and future need it, and the past tense agrees with the speaker's <b>gender</b> — this is a permanent feature of Russian, not a beginner detail.</p>
+    <div id="be-time"></div>
+  </section>
+
+  <section id="s-pron">
+    <span class="snum">03 — МЕСТОИМЕ́НИЯ / PRONOUNS</span>
+    <h2>Eight pronouns, and why <span class="ru-h">вы</span> is a social decision</h2>
+    <div class="h2rule"></div>
+    <div class="tw"><table id="t-pron"></table></div>
+    <div class="call warn">
+      <h4>ты or вы — get this wrong and it's felt, not just heard</h4>
+      <p>Using <span class="ru">ты</span> <span class="tl">(ty)</span> with an older stranger, an official, or a shop assistant reads as <b>disrespectful or aggressive</b>. Using <span class="ru">вы</span> <span class="tl">(vy)</span> with a close friend reads as <b>cold, or sarcastic</b>. There is no neutral option — you choose every time you open your mouth.</p>
+      <p><b>Default to вы with anyone you have not been invited to address as ты.</b> The invitation is a real, spoken moment, and it sounds like this:</p>
+    </div>
+    <div id="ty-vy"></div>
+  </section>
+
+  <section id="s-name">
+    <span class="snum">04 — КАК ТЕБЯ́ ЗОВУ́Т? / YOUR NAME</span>
+    <h2>“My name is” is really <span class="ru-h">“they call me”</span></h2>
+    <div class="h2rule"></div>
+    <p>There is no verb “to be called” used the way English uses it. Russians say <b>they call me Nikos</b> — with an invisible, unnamed “they”. The word <span class="ru">меня́</span> is not “I”, it is the object form: <b>me</b>.</p>
+    <div id="name-core"></div>
+    <h3>The whole family of it <span class="g">— меня́ / тебя́ / его́ / её …</span></h3>
+    <p>Change only the first word and you can name anybody in the room. The verb <span class="ru">зову́т</span> <span class="tl">(za-VOOT)</span> never changes.</p>
+    <div class="tw"><table id="t-zovut"></table></div>
+    <div class="call">
+      <h4>Sound trap</h4>
+      <p><span class="ru">его́</span> is <b>not</b> "ye-GO". The letter <span class="ru">г</span> in these endings is pronounced <b>v</b>: <span class="tl">ye-VO</span>. Same in <span class="ru">ничего́</span> <span class="tl">(nee-chee-VO)</span> — <i>nothing</i>, and <span class="ru">сего́дня</span> <span class="tl">(see-VOD-nya)</span> — <i>today</i>.</p>
+    </div>
+  </section>
+
+  <section id="s-from">
+    <span class="snum">05 — ОТКУ́ДА ТЫ? / WHERE YOU'RE FROM</span>
+    <h2>из + <span class="ru-h">роди́тельный паде́ж</span> — your first case</h2>
+    <div class="h2rule"></div>
+    <p>The preposition <span class="ru">из</span> <span class="tl">(eez)</span> — <i>from, out of</i> — forces the country name to change its ending. That changed form is the <b>genitive case</b>. You do not need the theory yet; you need the pattern, which is almost entirely regular.</p>
+    <div id="from-core"></div>
+    <h3>The pattern <span class="g">— –ия becomes –ии</span></h3>
+    <div class="tw"><table id="t-from"></table></div>
+    <div class="call win">
+      <h4>The rule in one line</h4>
+      <p>Country ends in <span class="ru">–ия</span> → change to <span class="ru">–ии</span>. Ends in <span class="ru">–а</span> → change to <span class="ru">–ы</span> (or <span class="ru">–и</span> after к, г, х, ж, ш, ч, щ). Ends in a consonant → add <span class="ru">–а</span>. That covers roughly nine countries out of ten.</p>
+    </div>
+    <div class="call warn">
+      <h4>Islands take с, not из</h4>
+      <p>You come <b>off</b> an island, not <b>out of</b> it. <span class="ru">с Ки́пра</span> <span class="tl">(s KEEP-ra)</span> — <i>from Cyprus</i>. <span class="ru">с Кри́та</span> <span class="tl">(s KREE-ta)</span> — <i>from Crete</i>. Same logic sends you <span class="ru">на Кипр</span> <span class="tl">(na KEEPR)</span> — <i>to Cyprus</i>, never <span class="ru">в Кипр</span>.</p>
+    </div>
+  </section>
+
+  <section id="s-live">
+    <span class="snum">06 — ГДЕ ТЫ ЖИВЁШЬ? / WHERE YOU LIVE</span>
+    <h2>в + <span class="ru-h">предло́жный паде́ж</span> — location</h2>
+    <div class="h2rule"></div>
+    <p>Second case, second pattern. <span class="ru">в</span> <span class="tl">(v)</span> — <i>in</i> — plus a city forces the <b>prepositional case</b>, which for most nouns is simply <span class="ru">–е</span> on the end. This is the easiest case in the language and it appears constantly.</p>
+    <div id="live-core"></div>
+    <div class="tw"><table id="t-live"></table></div>
+    <div class="call key">
+      <h4>One preposition, two cases, two meanings</h4>
+      <p><span class="ru">Я живу́ в Москве́</span> <span class="tl">(v mask-VYE)</span> — <b>I live in Moscow.</b> Location.<br>
+      <span class="ru">Я е́ду в Москву́</span> <span class="tl">(v mask-VOO)</span> — <b>I'm going to Moscow.</b> Direction.<br>
+      Same preposition. One letter of difference. Completely different sentence. This is what cases <i>do</i> — they carry the meaning that English carries with word order and extra prepositions.</p>
+    </div>
+  </section>
+
+  <section id="s-work">
+    <span class="snum">07 — ЧЕМ ТЫ ЗАНИМА́ЕШЬСЯ? / WHAT YOU DO</span>
+    <h2>Your job, in the <span class="ru-h">твори́тельный паде́ж</span></h2>
+    <div class="h2rule"></div>
+    <p>Two ways to ask. The casual one is broader — “what are you occupied with” — and is what you'll actually hear at a party. The direct one asks specifically for a job title and forces the <b>instrumental case</b>, because in Russian you work <i>as</i> something, using it like a tool.</p>
+    <div id="work-core"></div>
+    <h3>Job titles <span class="g">— я рабо́таю + –ом / –ем</span></h3>
+    <div class="tw"><table id="t-jobs"></table></div>
+    <div class="call">
+      <h4>The escape hatch</h4>
+      <p>If your job has no clean Russian word — and “works with data in markets” does not — do what Russians do and describe the activity instead: <span class="ru">Я рабо́таю с да́нными</span> <span class="tl">(s DAN-ny-mee)</span> — <i>I work with data</i>. Or <span class="ru">Я рабо́таю на себя́</span> <span class="tl">(na see-BYA)</span> — <i>I work for myself</i>. Nobody will push further on a first meeting.</p>
+    </div>
+  </section>
+
+  <section id="s-greet">
+    <span class="snum">08 — ПРИВЕ́ТСТВИЯ / GREETINGS</span>
+    <h2>Hello has a <span class="ru-h">clock</span> attached to it</h2>
+    <div class="h2rule"></div>
+    <p>Russian greetings are time-bound and register-bound at the same time. Choosing wrong isn't a grammar error — it's a social one, and it's noticed immediately.</p>
+    <div class="tw"><table id="t-greet"></table></div>
+    <div class="call warn">
+      <h4>Спокойной ночи is not “good night” as a greeting</h4>
+      <p><span class="ru">Споко́йной но́чи</span> <span class="tl">(spa-KOY-nay NO-chee)</span> means <b>sleep well</b> and is said only when someone is going to bed. If you meet someone at 11pm, the greeting is still <span class="ru">до́брый ве́чер</span> <span class="tl">(DOB-ry VYE-chir)</span> — <i>good evening</i>.</p>
+    </div>
+  </section>
+
+  <section id="s-survive">
+    <span class="snum">09 — ВЫЖИВА́НИЕ / THE SURVIVAL KIT</span>
+    <h2>Eleven phrases that keep a conversation <span class="ru-h">alive</span></h2>
+    <div class="h2rule"></div>
+    <p>These matter more than any vocabulary list. A conversation dies the moment you don't understand and can't say so. These phrases buy you repetition, slower speech, and translation — which means the conversation continues, and every extra minute of it is training.</p>
+    <div id="survive"></div>
+  </section>
+
+  <section id="s-sound">
+    <span class="snum">10 — ПРОИЗНОШЕ́НИЕ / PRONUNCIATION LAB</span>
+    <h2>Eight sound rules that make you <span class="ru-h">understandable</span></h2>
+    <div class="h2rule"></div>
+    <p>Russian spelling and Russian speech are two different systems. These eight rules bridge them. Fix these and you will be understood with broken grammar; ignore them and perfect grammar won't save you.</p>
+    <div id="sound"></div>
+    <h3>Minimal pairs <span class="g">— say both, hear the difference</span></h3>
+    <p>If these sound identical to you right now, that's normal and it's fixable. Play each pair five times before you try to produce them.</p>
+    <div class="grid2" id="pairs"></div>
+  </section>
+
+  <section id="s-num">
+    <span class="snum">11 — ЧИ́СЛА / NUMBERS</span>
+    <h2>Zero to a hundred, and your <span class="ru-h">age</span></h2>
+    <div class="h2rule"></div>
+    <p>You need numbers on day one — prices, times, your age, your phone number. Learn the shape of these now; the grammar that follows them (and it is genuinely strange) can wait for lesson four.</p>
+    <div class="tw"><table id="t-num"></table></div>
+    <h3>Saying your age <span class="g">— мне … лет</span></h3>
+    <p>Russian doesn't say “I <i>am</i> thirty”. It says <b>to me — thirty years</b>. You are in the dative case, and the years belong to you rather than the other way round.</p>
+    <div id="age"></div>
+  </section>
+
+  <section id="s-dialog">
+    <span class="snum">12 — ДИАЛО́Г / PUTTING IT TOGETHER</span>
+    <h2>Everything above, in <span class="ru-h">eight lines</span></h2>
+    <div class="h2rule"></div>
+    <p>This is the target. Read it, then play the whole thing and speak over the top of it — same speed, same rhythm, same intonation. That's called shadowing and it is the single highest-yield thing you can do with fifteen minutes.</p>
+    <div style="margin-bottom:14px"><button class="say" id="playall" style="width:auto;border-radius:6px;padding:8px 15px;font-family:'JetBrains Mono',monospace;font-size:.75rem">▸ ПРОИГРА́ТЬ ВЕСЬ ДИАЛО́Г / play whole dialogue</button></div>
+    <div class="dl" id="dialog"></div>
+  </section>
+
+  <section id="s-test">
+    <span class="snum">13 — ПРОВЕ́РКА / THE TEST</span>
+    <h2>Answer first. <span class="ru-h">Then</span> open it.</h2>
+    <div class="h2rule"></div>
+    <p>Reading an answer teaches you nothing; failing to retrieve one and <i>then</i> reading it teaches you a great deal. Say each answer out loud before you click. Getting it wrong is the point of the exercise.</p>
+    <div id="test"></div>
+  </section>
+
+  <section id="s-hw">
+    <span class="snum">14 — ДОМА́ШНЕЕ ЗАДА́НИЕ / HOMEWORK</span>
+    <h2>Three things, twenty minutes</h2>
+    <div class="h2rule"></div>
+    <div class="call win">
+      <h4>1 — The introduction, five times, out loud</h4>
+      <p>Chain all four together with no pause between them: name, country, city, job. Record it on your phone. <b>The pauses on that recording are your actual curriculum</b> — whatever you hesitate on is what lesson two gets built around.</p>
+    </div>
+    <div class="call win">
+      <h4>2 — Decode twenty words at speed</h4>
+      <p>Open the trainer's <b>Декодер</b> module and run one set. Report the average. Under 1.5 seconds per word means we skip decoding drills entirely and go straight to cases.</p>
+    </div>
+    <div class="call win">
+      <h4>3 — Ten sentences off one frame</h4>
+      <p>Take <span class="ru">Я рабо́таю…</span> and produce ten true sentences about your own life. Not translations of English sentences — sentences you build directly in the frame. If you can only make four, that number is the honest measure of where you are.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="orn" style="margin-top:0;margin-bottom:26px"></div>
+    Уро́к пе́рвый · Lesson one · Стресс-ма́рки укомплекто́ваны — every stressed vowel is marked with ´<br>
+    <span style="color:#565E7E">Audio uses your browser's Russian voice. If nothing plays, no ru-RU voice is installed on this device.</span>
+  </footer>
+</main>
+
+<div id="toolbar">
+  <button id="t-hide" aria-pressed="false">СКРЫТЬ ПЕРЕВО́Д · hide EN</button>
+  <button id="t-slow" aria-pressed="false">МЕ́ДЛЕННО · slow audio</button>
+  <button id="t-top">▲ НАВЕ́РХ · top</button>
+</div>
+
+<script>
+"use strict";
+
+/* ══════════ DATA ══════════ */
+
+const ALPHABET=[
+["А а","a — as in father","а́вгуст","AV-goost","August",0],
+["Б б","b","брат","brat","brother",0],
+["В в","v  ← not B","вода́","va-DA","water",1],
+["Г г","g","го́род","GO-rat","city",0],
+["Д д","d","дом","dom","house",0],
+["Е е","ye","есть","yest'","to eat / there is",0],
+["Ё ё","yo — always stressed","ёлка","YOL-ka","fir tree",0],
+["Ж ж","zh — as in measure","жена́","zhe-NA","wife",0],
+["З з","z","зима́","zee-MA","winter",0],
+["И и","ee","и́мя","EE-mya","name",0],
+["Й й","y — short, as in boy","мой","moy","my",0],
+["К к","k","кот","kot","cat",0],
+["Л л","l","луна́","loo-NA","moon",0],
+["М м","m","ма́ма","MA-ma","mum",0],
+["Н н","n  ← not H","нет","nyet","no",1],
+["О о","o stressed, a unstressed","о́сень","O-sin'","autumn",0],
+["П п","p","па́па","PA-pa","dad",0],
+["Р р","r — rolled  ← not P","река́","ree-KA","river",1],
+["С с","s  ← not C","спаси́бо","spa-SEE-ba","thank you",1],
+["Т т","t","там","tam","there",0],
+["У у","oo  ← not Y","у́тро","OO-tra","morning",1],
+["Ф ф","f","фильм","film","film",0],
+["Х х","kh — as in loch  ← not X","хлеб","khlyep","bread",1],
+["Ц ц","ts","центр","tsentr","centre",0],
+["Ч ч","ch","чай","chai","tea",0],
+["Ш ш","sh — hard, flat","шко́ла","SHKO-la","school",0],
+["Щ щ","shch — softer, longer","щи","shchee","cabbage soup",0],
+["Ъ ъ","hard sign — no sound","объе́кт","ab-YEKT","object",0],
+["Ы ы","y — tongue pulled back","сын","syn","son",0],
+["Ь ь","soft sign — softens what precedes","мать","mat'","mother",0],
+["Э э","e — as in end","э́то","E-ta","this",0],
+["Ю ю","yu","юг","yook","south",0],
+["Я я","ya","я́блоко","YA-bla-ka","apple",0]
+];
+
+const BE_EX=[
+{ru:"Он до́ктор.",tl:"on DOK-tar",en:"He is a doctor.",lit:"he [—] doctor"},
+{ru:"Э́то мой друг.",tl:"E-ta moy drook",en:"This is my friend.",lit:"this [—] my friend"},
+{ru:"Я из Гре́ции.",tl:"ya eez GRE-tsee-ee",en:"I am from Greece.",lit:"I [—] from Greece"},
+{ru:"Она́ о́чень у́мная.",tl:"a-NA O-chin' OOM-na-ya",en:"She is very smart.",lit:"she [—] very smart"},
+{ru:"Москва́ большо́й го́род.",tl:"mask-VA bal'-SHOY GO-rat",en:"Moscow is a big city.",lit:"Moscow [—] big city"},
+{ru:"Мы гото́вы.",tl:"my ga-TO-vy",en:"We are ready.",lit:"we [—] ready"}
+];
+
+const BE_TIME=[
+{ru:"Я был в Москве́.",tl:"ya byl v mask-VYE",en:"I was in Moscow.",note:"был — male speaker. A woman says была́ (by-LA)."},
+{ru:"Она́ была́ на рабо́те.",tl:"a-NA by-LA na ra-BO-tye",en:"She was at work.",note:"была́ — feminine past. The verb agrees with who is speaking, not with whom you're speaking to."},
+{ru:"Э́то бы́ло интере́сно.",tl:"E-ta BY-la een-tee-RYES-na",en:"That was interesting.",note:"бы́ло — neuter, used for “it / that”."},
+{ru:"Они́ бы́ли до́ма.",tl:"a-NEE BY-lee DO-ma",en:"They were at home.",note:"бы́ли — plural, no gender."},
+{ru:"За́втра я бу́ду до́ма.",tl:"ZAV-tra ya BOO-doo DO-ma",en:"Tomorrow I will be home.",note:"бу́ду — future. Unlike the past, it does not change for gender: я бу́ду, ты бу́дешь, он бу́дет."}
+];
+
+const PRONOUNS=[
+["я","ya","I","—"],
+["ты","ty","you","one person, informal — friends, family, peers, children"],
+["он","on","he / it (masc.)","also used for any masculine noun: стол → он"],
+["она́","a-NA","she / it (fem.)","also any feminine noun: кни́га → она́"],
+["оно́","a-NO","it (neuter)","for neuter nouns only — rare as a standalone “it”"],
+["мы","my","we","—"],
+["вы","vy","you","formal to one person, OR plural to several"],
+["они́","a-NEE","they","no gender in the plural"]
+];
+
+const TYVY=[
+{ru:"Дава́й на «ты»?",tl:"da-VAY na ty",en:"Shall we switch to “ty”?",lit:"let's onto “ty”",note:"The standard way to propose dropping formality. Almost always accepted — refusing is a statement in itself."},
+{ru:"Мо́жно на «ты»?",tl:"MOZH-na na ty",en:"May we switch to “ty”?",lit:"is-it-permitted onto “ty”",note:"Slightly more polite version — better if the other person is older than you."},
+{ru:"Дава́й!",tl:"da-VAY",en:"Let's! / Sure!",lit:"let's",note:"The reply. Also means “come on”, “go on”, and — oddly — “bye” on the phone."},
+{ru:"Как вас зову́т?",tl:"kak vas za-VOOT",en:"What is your name? (formal)",lit:"how you they-call",note:"Use this with anyone you haven't been invited to ты with. Never wrong."}
+];
+
+const NAME_CORE=[
+{ru:"Как тебя́ зову́т?",tl:"kak tee-BYA za-VOOT",en:"What is your name? (informal)",lit:"how you they-call",big:1},
+{ru:"Меня́ зову́т Ни́кос.",tl:"mee-NYA za-VOOT NEE-kas",en:"My name is Nikos.",lit:"me they-call Nikos",big:1,note:"меня́ is the object form of я. You never say «Я зову́т…» — that is nonsense in Russian."},
+{ru:"О́чень прия́тно.",tl:"O-chin' pree-YAT-na",en:"Nice to meet you.",lit:"very pleasant",note:"Said immediately after names are exchanged. Not optional — leaving it out feels abrupt."},
+{ru:"Взаи́мно.",tl:"vza-EEM-na",en:"Likewise. / Mutually.",lit:"mutually",note:"The natural reply to О́чень прия́тно. Sounds far more native than repeating the phrase back."}
+];
+
+const ZOVUT=[
+["Меня́ зову́т…","mee-NYA za-VOOT","My name is…","me they-call"],
+["Тебя́ зову́т…","tee-BYA za-VOOT","Your name is… (informal)","you they-call"],
+["Его́ зову́т…","ye-VO za-VOOT","His name is…","him they-call"],
+["Её зову́т…","ye-YO za-VOOT","Her name is…","her they-call"],
+["Нас зову́т…","nas za-VOOT","Our names are…","us they-call"],
+["Вас зову́т…","vas za-VOOT","Your name is… (formal / plural)","you they-call"],
+["Их зову́т…","eekh za-VOOT","Their names are…","them they-call"]
+];
+
+const FROM_CORE=[
+{ru:"Отку́да ты?",tl:"at-KOO-da ty",en:"Where are you from? (informal)",lit:"from-where you",big:1},
+{ru:"Отку́да вы?",tl:"at-KOO-da vy",en:"Where are you from? (formal)",lit:"from-where you",big:1},
+{ru:"Я из Гре́ции.",tl:"ya eez GRE-tsee-ee",en:"I'm from Greece.",lit:"I from Greece",big:1,note:"Гре́ция becomes Гре́ции. The dictionary form of a country is almost never the form you say out loud."}
+];
+
+const FROM_TBL=[
+["Гре́ция","GRE-tsee-ya","Greece","из Гре́ции","eez GRE-tsee-ee"],
+["Росси́я","ra-SEE-ya","Russia","из Росси́и","eez ra-SEE-ee"],
+["А́нглия","ANG-lee-ya","England","из А́нглии","eez ANG-lee-ee"],
+["Герма́ния","geer-MA-nee-ya","Germany","из Герма́нии","eez geer-MA-nee-ee"],
+["Ита́лия","ee-TA-lee-ya","Italy","из Ита́лии","eez ee-TA-lee-ee"],
+["Фра́нция","FRAN-tsee-ya","France","из Фра́нции","eez FRAN-tsee-ee"],
+["Украи́на","oo-kra-EE-na","Ukraine","из Украи́ны","eez oo-kra-EE-ny"],
+["Аме́рика","a-MYE-ree-ka","America","из Аме́рики","eez a-MYE-ree-kee"],
+["Кипр","keepr","Cyprus","с Ки́пра","s KEEP-ra"]
+];
+
+const LIVE_CORE=[
+{ru:"Где ты живёшь?",tl:"gdye ty zhee-VYOSH",en:"Where do you live?",lit:"where you live",big:1},
+{ru:"Я живу́ в Афи́нах.",tl:"ya zhee-VOO v a-FEE-nakh",en:"I live in Athens.",lit:"I live in Athens",big:1,note:"Афи́ны is plural in Russian (like “Athens”), so it takes the plural ending –ах."},
+{ru:"Я живу́ здесь уже́ год.",tl:"ya zhee-VOO zdyes' oo-ZHE got",en:"I've been living here for a year.",lit:"I live here already year",note:"Russian uses the PRESENT tense for something still ongoing. Saying it in the past would mean you no longer live here."}
+];
+
+const LIVE_TBL=[
+["Москва́","mask-VA","Moscow","в Москве́","v mask-VYE"],
+["Ло́ндон","LON-dan","London","в Ло́ндоне","v LON-da-nye"],
+["Афи́ны","a-FEE-ny","Athens","в Афи́нах","v a-FEE-nakh"],
+["Салони́ки","sa-la-NEE-kee","Thessaloniki","в Салони́ках","v sa-la-NEE-kakh"],
+["Берли́н","beer-LEEN","Berlin","в Берли́не","v beer-LEE-nye"],
+["Пари́ж","pa-REESH","Paris","в Пари́же","v pa-REE-zhe"],
+["Петербу́рг","pee-teer-BOORK","St Petersburg","в Петербу́рге","v pee-teer-BOOR-gye"],
+["Кипр","keepr","Cyprus","на Ки́пре","na KEEP-rye"]
+];
+
+const WORK_CORE=[
+{ru:"Чем ты занима́ешься?",tl:"chem ty za-nee-MA-yesh-sya",en:"What do you do? (casual)",lit:"with-what you occupy-yourself",big:1,note:"The one you'll actually hear socially. It covers work, study, hobbies — anything."},
+{ru:"Кем ты рабо́таешь?",tl:"kyem ty ra-BO-ta-yesh",en:"What do you do for work?",lit:"as-whom you work",big:1,note:"Asks specifically for a job title. The answer must be in the instrumental case."},
+{ru:"Я рабо́таю с да́нными.",tl:"ya ra-BO-ta-yu s DAN-ny-mee",en:"I work with data.",lit:"I work with data",big:1},
+{ru:"Я студе́нт.",tl:"ya stoo-DYENT",en:"I'm a student.",lit:"I [—] student",note:"No case change here — “I am X” uses the plain dictionary form. Only рабо́тать forces the instrumental. Female: студе́нтка."}
+];
+
+const JOBS=[
+["инжене́р","een-zhe-NYER","engineer","инжене́ром","een-zhe-NYE-ram"],
+["программи́ст","pra-gra-MEEST","programmer","программи́стом","pra-gra-MEES-tam"],
+["тре́йдер","TREY-dyer","trader","тре́йдером","TREY-dye-ram"],
+["врач","vrach","doctor","врачо́м","vra-CHOM"],
+["учи́тель","oo-CHEE-teel'","teacher","учи́телем","oo-CHEE-tee-lyem"],
+["ме́неджер","MYE-ned-zher","manager","ме́неджером","MYE-ned-zhe-ram"],
+["журнали́ст","zhoor-na-LEEST","journalist","журнали́стом","zhoor-na-LEES-tam"],
+["по́вар","PO-var","cook / chef","по́варом","PO-va-ram"]
+];
+
+const GREET=[
+["До́брое у́тро","DOB-ra-ye OO-tra","Good morning","until roughly midday · any register"],
+["До́брый день","DOB-ry dyen'","Good afternoon","midday to evening · the safest greeting in Russian"],
+["До́брый ве́чер","DOB-ry VYE-chir","Good evening","from about 6pm, including late at night"],
+["Здра́вствуйте","ZDRAST-vooy-tye","Hello","formal · to anyone you address as вы · в is silent"],
+["Приве́т","pree-VYET","Hi","informal only · friends and peers"],
+["Здоро́во","zda-RO-va","Hey / alright","very casual, mostly between men"],
+["Как дела́?","kak dye-LA","How are you?","not small talk — Russians answer honestly"],
+["Норма́льно","nar-MAL'-na","Fine / OK","the standard honest reply · not enthusiastic, not negative"],
+["Всё хорошо́","fsyo kha-ra-SHO","Everything's good","warmer than норма́льно"],
+["До свида́ния","da svee-DA-nee-ya","Goodbye","neutral to formal · always safe"],
+["Пока́","pa-KA","Bye","informal · with friends"],
+["Уви́димся","oo-VEE-deem-sya","See you","informal · literally “we'll see each other”"],
+["Споко́йной но́чи","spa-KOY-nay NO-chee","Good night","ONLY when parting for sleep"]
+];
+
+const SURVIVE=[
+{ru:"Я не понима́ю.",tl:"ya nye pa-nee-MA-yu",en:"I don't understand.",big:1},
+{ru:"Я пло́хо говорю́ по-ру́сски.",tl:"ya PLO-kha ga-va-RYU pa-ROO-skee",en:"I speak Russian badly.",lit:"I badly speak in-Russian",note:"Say this early. It changes how the other person speaks to you for the rest of the conversation — and that's the entire point."},
+{ru:"Я то́лько начина́ю учи́ть ру́сский.",tl:"ya TOL'-ka na-chee-NA-yu oo-CHEET' ROO-skee",en:"I'm only just starting to learn Russian.",lit:"I only begin to-learn Russian",note:"Buys enormous goodwill. Russians are genuinely pleased when foreigners try."},
+{ru:"Повтори́те, пожа́луйста.",tl:"pav-ta-REE-tye pa-ZHAL-sta",en:"Please repeat. (formal)",note:"пожа́луйста is pronounced with the middle collapsed: pa-ZHAL-sta, not pa-ZHA-loo-ee-sta."},
+{ru:"Повтори́, пожа́луйста.",tl:"pav-ta-REE pa-ZHAL-sta",en:"Please repeat. (informal)"},
+{ru:"Говори́те ме́дленнее, пожа́луйста.",tl:"ga-va-REE-tye MYED-lee-nye-ye pa-ZHAL-sta",en:"Please speak more slowly."},
+{ru:"Что э́то зна́чит?",tl:"shto E-ta ZNA-cheet",en:"What does that mean?",note:"что is pronounced shto — the ч is an sh here. One of very few such words."},
+{ru:"Как по-ру́сски «coffee»?",tl:"kak pa-ROO-skee",en:"How do you say “coffee” in Russian?",lit:"how in-Russian coffee",note:"The single most useful sentence for a beginner. It turns every conversation into a vocabulary lesson."},
+{ru:"Как э́то пи́шется?",tl:"kak E-ta PEE-shet-sya",en:"How is that spelled?",lit:"how it writes-itself"},
+{ru:"Вы говори́те по-англи́йски?",tl:"vy ga-va-REE-tye pa-an-GLEE-skee",en:"Do you speak English?",note:"Your safety net — but use it last, not first."},
+{ru:"Извини́те, я не по́нял.",tl:"eez-vee-NEE-tye ya nye PO-nyal",en:"Sorry, I didn't catch that. (male speaker)",note:"A woman says: я не поняла́ (ya nye pa-nya-LA)."}
+];
+
+const SOUND=[
+{t:"1 · Unstressed о becomes а",d:"This is the loudest single accent marker in Russian, and it is free to fix. Any о that is NOT stressed is pronounced as a short а.",ex:[["молоко́","ma-la-KO","milk"],["хорошо́","kha-ra-SHO","good / well"],["Москва́","mask-VA","Moscow"],["вода́","va-DA","water"],["она́","a-NA","she"]]},
+{t:"2 · Unstressed е and я become “ee”",d:"The same reduction hits е and я. They collapse toward a short “ee” sound whenever the stress is elsewhere.",ex:[["язы́к","yee-ZYK","language / tongue"],["сестра́","sees-TRA","sister"],["меня́","mee-NYA","me"],["телефо́н","tee-lee-FON","telephone"]]},
+{t:"3 · Silent letters",d:"Some consonant clusters are simply not pronounced in full. These are fixed, memorised exceptions — there is no rule to derive.",ex:[["здра́вствуйте","ZDRAST-vooy-tye","hello — в is silent"],["се́рдце","SYER-tse","heart — д is silent"],["со́лнце","SON-tse","sun — л is silent"],["что","shto","what — ч sounds like ш"]]},
+{t:"4 · г sounds like в in –его / –ого endings",d:"In the genitive endings of pronouns and adjectives, the letter г is pronounced v. It is spelled one way and said another, always.",ex:[["его́","ye-VO","his / him"],["ничего́","nee-chee-VO","nothing / never mind"],["сего́дня","see-VOD-nya","today"],["ново́го","na-VO-va","new (genitive)"]]},
+{t:"5 · чн sounds like шн",d:"A small, fixed group of words where чн is said shn. Getting these wrong marks you as a foreigner instantly.",ex:[["коне́чно","ka-NYESH-na","of course"],["ску́чно","SKOOSH-na","boring"],["яи́чница","ya-EESH-nee-tsa","fried eggs"]]},
+{t:"6 · Final consonants devoice",d:"At the end of a word, voiced consonants turn into their voiceless twins: б→п, в→ф, г→к, д→т, ж→ш, з→с.",ex:[["год","got","year"],["хлеб","khlyep","bread"],["друг","drook","friend"],["муж","moosh","husband"],["раз","ras","time / once"]]},
+{t:"7 · Stress is unpredictable and it moves",d:"Russian stress is not fixed by position and it shifts between forms of the same word. Wrong stress does not make you sound foreign — it can make you incomprehensible. This is why every Russian word on this page is marked.",ex:[["рука́","roo-KA","hand (singular)"],["ру́ки","ROO-kee","hands (plural) — stress jumps back"],["го́род","GO-rat","city"],["города́","ga-ra-DA","cities — stress jumps forward"]]},
+{t:"8 · Hard and soft consonants",d:"Every Russian consonant has a hard and a soft version. The soft one is made by pressing the middle of your tongue toward the roof of your mouth — like adding a tiny “y”. The letters ь, я, е, ё, ю, и soften whatever comes before them.",ex:[["брат","brat","brother — hard т"],["брать","brat'","to take — soft т"],["мат","mat","checkmate / foul language — hard"],["мать","mat'","mother — soft"]]}
+];
+
+const PAIRS=[
+{t:"ы versus и",rows:[["был / бил","byl / beel","was / he hit"],["мыл / мил","myl / meel","he washed / nice"],["сыр / сир","syr / seer","cheese / sire"]]},
+{t:"hard versus soft",rows:[["мат / мать","mat / mat'","foul language / mother"],["брат / брать","brat / brat'","brother / to take"],["у́гол / у́голь","OO-gal / OO-gal'","corner / coal"]]},
+{t:"ш versus щ",rows:[["шар / щи","shar / shchee","balloon / cabbage soup"],["ша́пка","SHAP-ka","hat — flat, hard sh"],["ще́ка","shche-KA","cheek — long, soft shch"]]},
+{t:"ч versus ц",rows:[["час / цирк","chas / tsyrk","hour / circus"],["чай","chai","tea — ch as in chair"],["центр","tsentr","centre — ts as in cats"]]}
+];
+
+const NUMBERS=[
+["ноль","nol'","0"],["оди́н","a-DEEN","1"],["два","dva","2"],["три","tree","3"],["четы́ре","chee-TY-rye","4"],
+["пять","pyat'","5"],["шесть","shest'","6"],["семь","syem'","7"],["во́семь","VO-seem'","8"],["де́вять","DYE-vyat'","9"],
+["де́сять","DYE-syat'","10"],["оди́ннадцать","a-DEE-na-tsat'","11"],["двена́дцать","dvee-NA-tsat'","12"],
+["два́дцать","DVA-tsat'","20"],["три́дцать","TREE-tsat'","30"],["со́рок","SO-rak","40"],["пятьдеся́т","pee-dee-SYAT","50"],["сто","sto","100"]
+];
+
+const AGE=[
+{ru:"Ско́лько тебе́ лет?",tl:"SKOL'-ka tee-BYE lyet",en:"How old are you? (informal)",lit:"how-much to-you of-years",big:1},
+{ru:"Ско́лько вам лет?",tl:"SKOL'-ka vam lyet",en:"How old are you? (formal)",lit:"how-much to-you of-years"},
+{ru:"Мне три́дцать лет.",tl:"mnye TREE-tsat' lyet",en:"I'm thirty.",lit:"to-me thirty of-years",note:"After 5 and above you say лет. After 1 — год. After 2, 3, 4 — го́да. Мне два́дцать оди́н год / Мне два́дцать два го́да / Мне два́дцать пять лет."}
+];
+
+const DIALOG=[
+["A","Здра́вствуйте! Меня́ зову́т А́нна.","ZDRAST-vooy-tye · mee-NYA za-VOOT AN-na","Hello! My name is Anna."],
+["B","О́чень прия́тно. Я Ни́кос.","O-chin' pree-YAT-na · ya NEE-kas","Very nice to meet you. I'm Nikos."],
+["A","Отку́да вы, Ни́кос?","at-KOO-da vy NEE-kas","Where are you from, Nikos?"],
+["B","Я из Гре́ции, но живу́ здесь уже́ год.","ya eez GRE-tsee-ee · no zhee-VOO zdyes' oo-ZHE got","I'm from Greece, but I've been living here for a year."],
+["A","А кем вы рабо́таете?","a kyem vy ra-BO-ta-ye-tye","And what do you do for work?"],
+["B","Я рабо́таю с да́нными. А вы?","ya ra-BO-ta-yu s DAN-ny-mee · a vy","I work with data. And you?"],
+["A","Я преподаю́ англи́йский. Дава́йте на «ты»?","ya pree-pa-da-YU an-GLEE-skee · da-VAY-tye na ty","I teach English. Shall we switch to “ty”?"],
+["B","Дава́й! О́чень прия́тно, А́нна.","da-VAY · O-chin' pree-YAT-na AN-na","Let's! Very nice to meet you, Anna."]
+];
+
+const TEST=[
+{q:'How do you say <b>“My name is Nikos”</b>?',a:'<div class="ph"><div class="ph-ru">Меня́ зову́т Ни́кос.</div><div class="ph-tl">mee-NYA za-VOOT NEE-kas</div><div class="ph-en">My name is Nikos.</div><div class="ph-lit">literally: me they-call Nikos</div><div class="ph-note">If you said «Я зову́т» — that is the single most common beginner error. меня́, not я.</div></div>'},
+{q:'How do you ask <b>“Where are you from?”</b> — informally?',a:'<div class="ph"><div class="ph-ru">Отку́да ты?</div><div class="ph-tl">at-KOO-da ty</div><div class="ph-en">Where are you from? (informal)</div><div class="ph-note">Formal: Отку́да вы? (at-KOO-da vy). If in doubt with a stranger, use вы.</div></div>'},
+{q:'Translate: <span class="ru">Он до́ктор.</span>',a:'<div class="ph"><div class="ph-ru">Он до́ктор.</div><div class="ph-tl">on DOK-tar</div><div class="ph-en">He is a doctor.</div><div class="ph-note">There is no word for “is”. If you were looking for one, you were still thinking in English.</div></div>'},
+{q:'How do you say <b>“Nice to meet you”</b>?',a:'<div class="ph"><div class="ph-ru">О́чень прия́тно.</div><div class="ph-tl">O-chin\' pree-YAT-na</div><div class="ph-en">Nice to meet you.</div><div class="ph-lit">literally: very pleasant</div><div class="ph-note">The native reply is Взаи́мно (vza-EEM-na) — “likewise”.</div></div>'},
+{q:'How do you say <b>“I don\'t understand”</b>?',a:'<div class="ph"><div class="ph-ru">Я не понима́ю.</div><div class="ph-tl">ya nye pa-nee-MA-yu</div><div class="ph-en">I don\'t understand.</div><div class="ph-note">не always goes directly before the verb, never after.</div></div>'},
+{q:'Read aloud, then translate: <span class="ru">Я не зна́ю, где он.</span>',a:'<div class="ph"><div class="ph-ru">Я не зна́ю, где он.</div><div class="ph-tl">ya nye ZNA-yu · gdye on</div><div class="ph-en">I don\'t know where he is.</div><div class="ph-note">Note two things: the comma before где is compulsory in Russian, and “is” has vanished again — где он, not где он есть.</div></div>'},
+{q:'What is wrong with <span class="ru">Я есть до́ктор</span>?',a:'<div class="ph"><div class="ph-ru">Я до́ктор.</div><div class="ph-tl">ya DOK-tar</div><div class="ph-en">I am a doctor.</div><div class="ph-note">есть exists, but it means “there is / there exists”, or the verb “to eat”. «Я есть до́ктор» reads roughly as “I exist doctor”. Delete it.</div></div>'},
+{q:'Decode these three as fast as you can, and time yourself: <span class="ru">ба́нкомат · вокза́л · температу́ра</span>',a:'<div class="ph"><div class="ph-ru">ба́нкомат</div><div class="ph-tl">BAN-ka-mat</div><div class="ph-en">cash machine / ATM</div></div><div class="ph"><div class="ph-ru">вокза́л</div><div class="ph-tl">vag-ZAL</div><div class="ph-en">railway station</div><div class="ph-note">к before з voices to g: vag-ZAL, not vak-ZAL.</div></div><div class="ph"><div class="ph-ru">температу́ра</div><div class="ph-tl">tim-pee-ra-TOO-ra</div><div class="ph-en">temperature</div><div class="ph-note">Under 5 seconds for all three: your decoding is fine, and we skip straight to cases. Over 15: decoder drills daily for two weeks.</div></div>'}
+];
+
+/* ══════════ RENDER ══════════ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const plain=s=>String(s).replace(/́/g,"");
+
+function phrase(o){
+  return `<div class="ph${o.big?" big":""}">
+    <div class="ph-ru">${o.ru}<button class="say" data-say="${esc(o.ru)}" aria-label="Play audio">▸</button></div>
+    <div class="ph-tl">${esc(o.tl)}</div>
+    <div class="ph-en">${o.en}</div>
+    ${o.lit?`<div class="ph-lit">literally: ${esc(o.lit)}</div>`:""}
+    ${o.note?`<div class="ph-note">${o.note}</div>`:""}
+  </div>`;
+}
+const phrases=(arr,sel)=>{ $(sel).innerHTML=arr.map(phrase).join(""); };
+
+/* alphabet */
+$("#alpha").innerHTML=ALPHABET.map(([ch,snd,ex,extl,exen,trap])=>`
+  <div class="let${trap?" trap":""}">
+    <div class="ch">${ch}</div>
+    <div class="snd">${esc(snd)}</div>
+    <div class="ex">${ex}<button class="say" data-say="${esc(ex)}" style="width:20px;height:20px;min-width:20px;font-size:.55rem;margin-left:6px">▸</button></div>
+    <div class="extl">${esc(extl)}</div>
+    <div class="exen">${esc(exen)}</div>
+  </div>`).join("");
+
+phrases(BE_EX,"#be-ex");
+phrases(BE_TIME,"#be-time");
+phrases(TYVY,"#ty-vy");
+phrases(NAME_CORE,"#name-core");
+phrases(FROM_CORE,"#from-core");
+phrases(LIVE_CORE,"#live-core");
+phrases(WORK_CORE,"#work-core");
+phrases(SURVIVE,"#survive");
+phrases(AGE,"#age");
+
+/* tables */
+function table(sel,head,rows){
+  $(sel).innerHTML=`<thead><tr>${head.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${rows}</tbody>`;
+}
+table("#t-pron",["Russian","Say it","English","When"],
+  PRONOUNS.map(([r,t,e,w])=>`<tr><td class="ru">${r}<button class="say" data-say="${esc(r)}" style="width:20px;height:20px;min-width:20px;font-size:.55rem;margin-left:7px">▸</button></td><td class="tl">${esc(t)}</td><td class="en">${esc(e)}</td><td class="hint">${esc(w)}</td></tr>`).join(""));
+
+table("#t-zovut",["Russian","Say it","English","Word for word"],
+  ZOVUT.map(([r,t,e,l])=>`<tr><td class="ru">${r}<button class="say" data-say="${esc(r)}" style="width:20px;height:20px;min-width:20px;font-size:.55rem;margin-left:7px">▸</button></td><td class="tl">${esc(t)}</td><td class="en">${esc(e)}</td><td class="hint">${esc(l)}</td></tr>`).join(""));
+
+table("#t-from",["Country","Say it","English","“I'm from…”","Say it"],
+  FROM_TBL.map(([c,ct,e,g,gt])=>`<tr><td class="ru">${c}</td><td class="tl">${esc(ct)}</td><td class="en">${esc(e)}</td><td class="ru" style="color:#F0D48C">Я ${g}<button class="say" data-say="Я ${esc(g)}" style="width:20px;height:20px;min-width:20px;font-size:.55rem;margin-left:7px">▸</button></td><td class="tl">${esc(gt)}</td></tr>`).join(""));
+
+table("#t-live",["City","Say it","English","“I live in…”","Say it"],
+  LIVE_TBL.map(([c,ct,e,p,pt])=>`<tr><td class="ru">${c}</td><td class="tl">${esc(ct)}</td><td class="en">${esc(e)}</td><td class="ru" style="color:#F0D48C">Я живу́ ${p}<button class="say" data-say="Я живу ${esc(plain(p))}" style="width:20px;height:20px;min-width:20px;font-size:.55rem;margin-left:7px">▸</button></td><td class="tl">${esc(pt)}</td></tr>`).join(""));
+
+table("#t-jobs",["Job (dictionary form)","Say it","English","“I work as…”","Say it"],
+  JOBS.map(([j,jt,e,i,it])=>`<tr><td class="ru">${j}</td><td class="tl">${esc(jt)}</td><td class="en">${esc(e)}</td><td class="ru" style="color:#F0D48C">Я рабо́таю ${i}<button class="say" data-say="Я работаю ${esc(plain(i))}" style="width:20px;height:20px;min-width:20px;font-size:.55rem;margin-left:7px">▸</button></td><td class="tl">${esc(it)}</td></tr>`).join(""));
+
+table("#t-greet",["Russian","Say it","English","When to use it"],
+  GREET.map(([r,t,e,w])=>`<tr><td class="ru">${r}<button class="say" data-say="${esc(r)}" style="width:20px;height:20px;min-width:20px;font-size:.55rem;margin-left:7px">▸</button></td><td class="tl">${esc(t)}</td><td class="en">${esc(e)}</td><td class="hint">${esc(w)}</td></tr>`).join(""));
+
+table("#t-num",["№","Russian","Say it","№","Russian","Say it"],
+  (()=>{const half=Math.ceil(NUMBERS.length/2);let out="";
+   for(let i=0;i<half;i++){
+     const a=NUMBERS[i],b=NUMBERS[i+half];
+     out+=`<tr><td class="hint" style="font-family:'JetBrains Mono',monospace;color:var(--gold-dim)">${a[2]}</td><td class="ru">${a[0]}<button class="say" data-say="${esc(a[0])}" style="width:20px;height:20px;min-width:20px;font-size:.55rem;margin-left:7px">▸</button></td><td class="tl">${esc(a[1])}</td>`;
+     out+= b?`<td class="hint" style="font-family:'JetBrains Mono',monospace;color:var(--gold-dim)">${b[2]}</td><td class="ru">${b[0]}<button class="say" data-say="${esc(b[0])}" style="width:20px;height:20px;min-width:20px;font-size:.55rem;margin-left:7px">▸</button></td><td class="tl">${esc(b[1])}</td>`:"<td></td><td></td><td></td>";
+     out+="</tr>";
+   } return out;})());
+
+/* sound lab */
+$("#sound").innerHTML=SOUND.map(s=>`
+  <div class="call key" style="margin:18px 0">
+    <h4>${esc(s.t)}</h4>
+    <p style="margin-bottom:12px">${esc(s.d)}</p>
+    ${s.ex.map(([r,t,e])=>`<div class="mini"><span class="l">${r}<button class="say" data-say="${esc(r)}" style="width:20px;height:20px;min-width:20px;font-size:.55rem;margin-left:7px">▸</button> <span style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--mist)">${esc(t)}</span></span><span class="r">${esc(e)}</span></div>`).join("")}
+  </div>`).join("");
+
+$("#pairs").innerHTML=PAIRS.map(p=>`
+  <div class="pairbox"><div class="t">${esc(p.t)}</div>
+  ${p.rows.map(([r,t,e])=>`<div class="mini"><span class="l">${r}<button class="say" data-say="${esc(r.replace(/ \/ /g,", "))}" style="width:20px;height:20px;min-width:20px;font-size:.55rem;margin-left:7px">▸</button><br><span style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--mist)">${esc(t)}</span></span><span class="r">${esc(e)}</span></div>`).join("")}
+  </div>`).join("");
+
+/* dialogue */
+$("#dialog").innerHTML=DIALOG.map(([who,ru,tl,en])=>`
+  <div class="ln ${who==="A"?"a":"b"}">
+    <div class="who">${who}</div>
+    <div>
+      <div class="ph-ru" style="font-size:1.24rem">${ru}<button class="say" data-say="${esc(ru)}" aria-label="Play line">▸</button></div>
+      <div class="ph-tl">${esc(tl)}</div>
+      <div class="ph-en">${esc(en)}</div>
+    </div>
+  </div>`).join("");
+
+/* test */
+$("#test").innerHTML=TEST.map((t,i)=>`
+  <div class="q">
+    <div class="qh" role="button" tabindex="0" aria-expanded="false">
+      <span class="qn">${String(i+1).padStart(2,"0")}</span>
+      <span class="qt">${t.q}</span>
+      <span class="chev">▼</span>
+    </div>
+    <div class="qa"><div class="qa-in">${t.a}</div></div>
+  </div>`).join("");
+
+document.querySelectorAll(".q .qh").forEach(h=>{
+  const toggle=()=>{
+    const q=h.parentElement, open=q.classList.toggle("open");
+    h.setAttribute("aria-expanded",String(open));
+  };
+  h.addEventListener("click",toggle);
+  h.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle();} });
+});
+
+/* ══════════ SPEECH ══════════ */
+let VOICE=null, RATE=0.85;
+function initVoice(){
+  if(!("speechSynthesis" in window)) return;
+  const set=()=>{
+    const vs=speechSynthesis.getVoices().filter(v=>/^ru/i.test(v.lang));
+    VOICE=vs.find(v=>v.localService)||vs[0]||null;
+  };
+  set(); speechSynthesis.onvoiceschanged=set;
+}
+initVoice();
+function say(text,btn){
+  if(!("speechSynthesis" in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(plain(text));
+    u.lang="ru-RU"; u.rate=RATE; if(VOICE)u.voice=VOICE;
+    if(btn){ btn.classList.add("on"); u.onend=u.onerror=()=>btn.classList.remove("on"); }
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-say]");
+  if(b){ e.stopPropagation(); say(b.getAttribute("data-say"),b); }
+});
+$("#playall").addEventListener("click",()=>{
+  if(!("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  const nodes=document.querySelectorAll("#dialog .ln");
+  DIALOG.forEach(([w,ru],i)=>{
+    const u=new SpeechSynthesisUtterance(plain(ru));
+    u.lang="ru-RU"; u.rate=RATE; if(VOICE)u.voice=VOICE;
+    u.onstart=()=>{
+      nodes.forEach(n=>n.style.boxShadow="none");
+      if(nodes[i]) nodes[i].style.boxShadow="0 0 0 1px var(--gold), 0 0 24px rgba(233,188,87,.22)";
+    };
+    if(i===DIALOG.length-1) u.onend=()=>nodes.forEach(n=>n.style.boxShadow="none");
+    speechSynthesis.speak(u);
+  });
+});
+
+/* ══════════ TOOLBAR ══════════ */
+$("#t-hide").addEventListener("click",function(){
+  const on=document.body.classList.toggle("hidetr");
+  this.setAttribute("aria-pressed",String(on));
+  this.textContent = on ? "ПОКА́ЗАТЬ ПЕРЕВО́Д · show EN" : "СКРЫТЬ ПЕРЕВО́Д · hide EN";
+});
+$("#t-slow").addEventListener("click",function(){
+  RATE = RATE===0.85 ? 0.6 : 0.85;
+  const on=RATE===0.6;
+  this.setAttribute("aria-pressed",String(on));
+  this.textContent = on ? "НОРМА́ЛЬНО · normal audio" : "МЕ́ДЛЕННО · slow audio";
+});
+$("#t-top").addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
+
+/* ══════════ BACKGROUND: stars + drifting Cyrillic ══════════ */
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const cv=$("#stars"), ctx=cv.getContext("2d");
+let W=0,H=0,DPR=1,stars=[],glyphs=[],raf=null;
+const CYR="АБВГДЁЖЗИЙЛПФЦЧШЩЪЫЬЭЮЯбвгджзийклмнпфцчшщыэюя".split("");
+
+function sizeCanvas(){
+  DPR=Math.min(window.devicePixelRatio||1,2);
+  W=cv.clientWidth; H=cv.clientHeight;
+  cv.width=W*DPR; cv.height=H*DPR;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+function seed(){
+  stars=Array.from({length:Math.round(W*H/9000)},()=>({
+    x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.25+.25,
+    a:Math.random()*.55+.12, tw:Math.random()*.014+.004, ph:Math.random()*Math.PI*2,
+    vy:-(Math.random()*.05+.012)
+  }));
+  glyphs=Array.from({length:Math.max(14,Math.round(W/62))},()=>({
+    ch:CYR[Math.floor(Math.random()*CYR.length)],
+    x:Math.random()*W, y:Math.random()*H,
+    s:Math.random()*44+16, a:Math.random()*.055+.014,
+    vy:-(Math.random()*.19+.05), vx:(Math.random()-.5)*.11,
+    rot:(Math.random()-.5)*.45, vr:(Math.random()-.5)*.0022
+  }));
+}
+function frame(t){
+  ctx.clearRect(0,0,W,H);
+  for(const s of stars){
+    s.ph+=s.tw; s.y+=s.vy;
+    if(s.y<-2){ s.y=H+2; s.x=Math.random()*W; }
+    const a=s.a*(0.55+0.45*Math.sin(s.ph));
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,6.2832);
+    ctx.fillStyle=`rgba(214,224,255,${a.toFixed(3)})`; ctx.fill();
+  }
+  ctx.textAlign="center"; ctx.textBaseline="middle";
+  for(const g of glyphs){
+    g.y+=g.vy; g.x+=g.vx; g.rot+=g.vr;
+    if(g.y<-90){ g.y=H+90; g.x=Math.random()*W; g.ch=CYR[Math.floor(Math.random()*CYR.length)]; }
+    if(g.x<-90) g.x=W+90; else if(g.x>W+90) g.x=-90;
+    ctx.save(); ctx.translate(g.x,g.y); ctx.rotate(g.rot);
+    ctx.font=`700 ${g.s}px "PT Serif", Georgia, serif`;
+    ctx.fillStyle=`rgba(233,188,87,${g.a.toFixed(3)})`;
+    ctx.fillText(g.ch,0,0); ctx.restore();
+  }
+  raf=requestAnimationFrame(frame);
+}
+function start(){ if(!raf&&!reduce) raf=requestAnimationFrame(frame); }
+function stop(){ if(raf){cancelAnimationFrame(raf); raf=null;} }
+
+sizeCanvas(); seed();
+if(reduce){
+  /* static single frame so the background is never blank */
+  ctx.clearRect(0,0,W,H);
+  for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,6.2832); ctx.fillStyle=`rgba(214,224,255,${s.a.toFixed(3)})`; ctx.fill(); }
+} else start();
+
+let rz=null;
+addEventListener("resize",()=>{ clearTimeout(rz); rz=setTimeout(()=>{sizeCanvas();seed();},180); });
+document.addEventListener("visibilitychange",()=>{ document.hidden?stop():start(); });
+
+/* cursor glow + progress bar */
+const glow=$("#glow");
+if(!reduce && matchMedia("(pointer:fine)").matches){
+  addEventListener("pointermove",e=>{
+    glow.style.opacity="1";
+    glow.style.transform=`translate(${e.clientX}px,${e.clientY}px)`;
+  },{passive:true});
+}
+const bar=$("#bar");
+addEventListener("scroll",()=>{
+  const max=document.documentElement.scrollHeight-innerHeight;
+  bar.style.width=(max>0? (scrollY/max*100) : 0)+"%";
+},{passive:true});
+</script>
